@@ -1,0 +1,7 @@
+Xong màn
+Settime
+Login
+Forgot Password
+Change Password
+Control Switch
+Nhận dữ liệu cảm biến
