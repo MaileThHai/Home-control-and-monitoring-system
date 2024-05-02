@@ -1,0 +1,13 @@
+Done Center
+Settime
+Login
+Forgot Password
+Change Password
+Control Switch
+Get data from sensor Living room
+Weather Station
+Control Pump
+Set timer Pump
+Set period Pump
+Get data from Farm
+Push data google firebase
