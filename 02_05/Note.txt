@@ -11,3 +11,6 @@ Set timer Pump
 Set period Pump
 Get data from Farm
 Push data google firebase
+
+
+TÚ Lỏ
