@@ -9,6 +9,7 @@
 #include <UniversalTelegramBot.h>
 #include "Adafruit_SHT31.h"
 #include "Adafruit_CCS811.h"
+#include "esp_task_wdt.h"
 
 //=====================Tạo Task===============================
 #if CONFIG_FREERTOS_UNICORE
@@ -58,9 +59,6 @@ struct DataSensorLVR {
   byte ValSmokeSensor[4];
 } datasensorLVR;
 
-// struct SuccessLVF {
-//   char type[4] = "SSS";
-// } succsesslvf;
 struct DataSensorFARM {
   byte temperatureF[4];
   byte humidityF[4];
@@ -102,12 +100,20 @@ void setup() {
   delay(100);
 
   pinMode(Fire_GPIO, INPUT);
-
+  esp_task_wdt_deinit();
   //Check SHT31 is running
   if (!sht31.begin(0x44)) {
     Serial.println("Couldn't find SHT31");
     while (1) delay(1);
   }
+  if (!ccs.begin()) {
+    Serial.println("Failed to start sensor! Please check your wiring.");
+    while (1)
+      ;
+  }
+  // Wait for the sensor to be ready6
+  while (!ccs.available())
+    ;
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connect Wi-Fi");
@@ -127,10 +133,12 @@ void setup() {
 
   e32ttl100.begin();
 
+
+  xTaskCreatePinnedToCore(TaskReadDataSSLVR, "TaskReadDataSSLVR", 8000, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskSendDataLVR, "TaskSendDataLVR", 10000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(TaskReadDataSSLVR, "TaskReadDataSSLVR", 4096, NULL, 1, NULL, 0);
   //
-  xTaskCreatePinnedToCore(TaskREVPASSWORD, "TaskREVPASSWORD", 21000, NULL, 2, NULL, 0);
+  xTaskCreatePinnedToCore(TaskREVPASSWORD, "TaskREVPASSWORD", 21000, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(TaskFB, "TaskFB", 21000, NULL, 2, NULL, 0);
 }
 void loop() {
 }
@@ -141,22 +149,35 @@ void TaskReadDataSSLVR(void *pvParameters) {
     t = sht31.readTemperature();
     h = sht31.readHumidity();
     //CCS811//
-    co2 = ccs.geteCO2();
-    tvoc = ccs.getTVOC();
-    co2 = 897;
-    tvoc = 67;
+
+    if (ccs.available()) {
+      if (!ccs.readData()) {
+        co2 = ccs.geteCO2();
+        tvoc = ccs.getTVOC();
+        Serial.print("CO2: ");
+        Serial.print(co2);
+        Serial.print("ppm, TVOC: ");
+        Serial.println(tvoc);
+      }
+    }
+
     //FLAME//
     sensorValue = analogRead(Fire_GPIO);
     //SMOKE//
     MP4Value = analogRead(MP4_GPIO);
+    Serial.print("SMoke: ");
+    Serial.println(MP4Value);
 
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+  }
+}
+void TaskFB(void *pvParameters) {
+  (void)pvParameters;
+  for (;;) {
     if (runEvery(60000, &previousMillis1)) {
       xTaskCreatePinnedToCore(TaskDataFirebase, "TaskDataFirebase", 20000, NULL, 1, NULL, 0);
-
-      // xTaskCreatePinnedToCore(TaskSendAlert, "TaskSendAlert", 20000, NULL, 4, NULL, 0);
     }
-
-    vTaskDelay(350 / portTICK_PERIOD_MS);
+    vTaskDelay(350);
   }
 }
 void TaskSendDataLVR(void *pvParameters) {
@@ -182,16 +203,11 @@ void TaskSendDataLVR(void *pvParameters) {
     ResponseStatus rs = e32ttl100.sendFixedMessage(0, 1, 0xA, &datasensorLVR, sizeof(DataSensorLVR));
     Serial.println(rs.getResponseDescription());
 
-    // vTaskDelay(500);
-    // ResponseStatus rss = e32ttl100.sendFixedMessage(0, 4, 0xF, &succsesslvf, sizeof(SuccessLVF));
-
-    vTaskDelay(300000 / portTICK_PERIOD_MS);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
   }
 }
 void TaskDataFirebase(void *pvParameters) {
   (void)pvParameters;
-  // for (;;)  // A Task shall never return or exit.
-  // {
   Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Temperature", t);
   Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Humidity", h);
   Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/CO2", co2);
@@ -219,7 +235,6 @@ void TaskDataFirebase(void *pvParameters) {
   } else if (RAINFRM == 1) {
     Firebase.setString(fbdo, "/DataSensor/Farm/Status_RainSensor", "No Detect");
   }
-
   vTaskDelete(NULL);
 }
 void TaskREVPASSWORD(void *pvParameters) {
