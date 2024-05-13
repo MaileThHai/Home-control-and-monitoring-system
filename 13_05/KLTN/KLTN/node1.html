@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title> WEB KLTN </title>
+		<link rel="stylesheet" href="node1.css">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+        </script>
+</head>
+<body>
+<div class="container1">
+    <div class="box1">
+            
+            <h1 style="color: red; font-family: Times" class="name"> ĐỒ ÁN </h1>
+            <h1 style="color: yellow ; font-family: Times" class="name"> HỆ THỐNG GIÁM SÁT VÀ ĐIỀU KHIỂN </h1>
+            <a href="https://realtimeclock-weather-default-rtdb.firebaseio.com/" 
+            style="color: wheat" class="name"  target="_blank">Google Firebase</a>
+            <button class="loginButton" onclick="window.location.href='login.html'" style="float: right;">Logout</button>
+            
+    </div>
+</div>
+<div id="sidebar">
+    <ul>
+        <li><a href="./web.html">Home</a></li>
+        <li><a href="./node1.html">Node1</a></li>
+        <li><a href="./node2.html">Node2</a></li>
+        <li><a href="./node3.html">Node3</a></li>
+        <li><a href="login.html">Login</a></li>
+    </ul>
+</div>
+<!-----------------------------------Node1-------------------------------------------------------------------->   
+<div class="container2">
+    <div class="box2">
+        <p style="color: rgba(28, 111, 185, 0.813); font-size: 30px; text-align: center; font-family: Arial, Helvetica, sans-serif;"> NODE 1 </p>
+    </div>
+</div>
+<div class = "container3">
+    <div class="box3">
+        <div class="row1">
+            <div class="column1">
+                <img id="temp_node1_id" src="./image/tempon.png" alt="img" style="width: 60px;">
+                <p style="color: brown; font-size: small;">Nhiệt độ: <span style="color :red" id="temp_node1">None</span></p>
+                <canvas id="temp_node1_Chart" class ="temp_node1_chart" style="width: auto; height: auto;"></canvas>
+            </div>
+            <div class="column1">
+                <img id="hum_node1_id" src="./image/humon.png" alt="img" style="width: 60px;">
+                <p style="color: brown; font-size: small;">Độ ẩm: <span style="color :red" id="hum_node1">None</span></p>
+                <canvas id="hum_node1_Chart" class ="hum_node1_chart" style="width: auto; height: auto;"></canvas>
+            </div>
+            <div class="column1">
+                <img id="CO_node1_id" src="./image/co2.png" alt="img" style="width: 60px;">
+                <p style="color: brown; font-size: small;">CO2: <span style="color :red" id="co2_node1">None</span></p>
+                <canvas id="co2_node1_Chart" class ="co2_node1_chart" style="width: auto; height: auto;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class ="container4">
+    <div class ="box4">
+        <div class = "row1">
+            <div class = "column2">
+                <img id="relay1_node1_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                <p style="color: brown; font-size: small;">Relay 1: <span style="color :red" id="relay1_node1">None</span></p>
+                <button class="btn" id="relay1_node1_on" >ON</button>
+                <button class="btn" id="relay1_node1_off" >OFF</button>
+            </div>
+            <div class="column2">
+                <img id="relay2_node1_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                <p style="color: brown; font-size: small;">Relay 2: <span style="color :red" id="relay2_node1">None</span></p>
+                <button class="btn" id="relay2_node1_btn" >ON</button>
+                <button class="btn" id="relay2_node1_btn" >OFF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // random nhiệt độ
+/*const temperatureData = [];
+for (let i = 0; i < 10; i++) {
+    temperatureData.push(Math.floor(Math.random() * 100));
+}
+const humidityData = Array.from({length: 10}, () => Math.floor(Math.random() * 100));
+const co2Data = Array.from({length: 10}, () => Math.floor(Math.random() * 1000));
+// Update the temp_node1 span
+document.getElementById('temp_node1').textContent = temperatureData[temperatureData.length - 1];
+document.getElementById('hum_node1').textContent = humidityData[humidityData.length - 1];
+document.getElementById('CO_node1').textContent = co2Data[co2Data.length - 1];*/
+const humidityChartCanvas = document.getElementById('hum_node1_Chart').getContext('2d');
+const co2ChartCanvas = document.getElementById('co2_node1_Chart').getContext('2d');
+const temperatureChartCanvas = document.getElementById('temp_node1_Chart').getContext('2d');
+// --------------------------TIME LABLES-----------------------------------------------
+const timeLabels = [];
+for (let i = 0; i < 10; i++) {
+    let now = new Date();
+    let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    timeLabels.push(time);
+}
+
+
+// Create the line chart
+new Chart(temperatureChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'Temperature',
+            data: temp_node1,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+new Chart(humidityChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'Humidity',
+            data: hum_node1,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+
+new Chart(co2ChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'CO2',
+            data: co2_node1,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+<script src="node1.js"></script>
+<script src="web.js"></script>

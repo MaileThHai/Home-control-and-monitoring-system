@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="login.css">
+  <script src="https://kit.fontawesome.com/c4254e24a8.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="login-container">
+    <div class="form-box">
+      <h1>Login</h1>
+      <form id="login-form">
+        <div class="input-group">
+          <div class="input-field">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="username" placeholder="Userame" required>
+          </div>
+          <div class="input-field">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="Password" required>
+            <i class="fas fa-eye" id="eye-icon"></i>
+          </div>
+        </div>
+        <!-- Thêm nút đăng nhập -->
+        <button type="submit" id="login-button">Login</button>
+      </form>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,34 @@
+center:
+rev sensor liv
+rev sensor farm
+rev wt forecast control
+send control control
+send control farm
+send alert sensor
+send 2 control - sensor
+(send control farm) control
+
+sensor:
+rev alert center
+rev 2 control từ center đẩy firebase
+rev sensor farm
+đẩy all data -> firebase
+send sensor center
+(send sensor control) done
+(rev web qua firebase -> send center)
+*(rev wt forecast control)
+
+control ArduinoJson 5.12
+rev control center
+send wt forecast center
+(rev sensor sensor) done
+(rev sensor farm) done
+(rev control farm từ center)
+*(send wt forecast sensor)
+(đẩy all dữ liệu lên gg excel)
+
+farm
+rev control center
+send sensor center
+send sensor sensor
+(send sensor farm) done
