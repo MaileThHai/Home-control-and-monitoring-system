@@ -199,27 +199,28 @@ void TaskREVControlLight(void *pvParameters) {
         ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(ControlLVR));
         struct ControlLVR controllvr = *(ControlLVR *)rsc.data;
 
-        Serial.println(*(int *)(controllvr.Control1));
-        Serial.println(*(int *)(controllvr.Control2));
-
         // Kiểm tra giá trị của Control
         if (*(int *)(controllvr.Control1) == 1) {
           // Bật LED
           digitalWrite(RLYPIN1, LOW);
-          Serial.println("Current not Flowing");
+          Serial.println("Current1 Flowing");
         } else if (*(int *)(controllvr.Control1) == 0) {
           digitalWrite(RLYPIN1, HIGH);
-          Serial.println("Current Flowing");
-        } if (*(int *)(controllvr.Control2) == 1) {
+          Serial.println("Current1 not Flowing");
+        }
+        if (*(int *)(controllvr.Control2) == 1) {
           digitalWrite(RLYPIN2, LOW);
-          Serial.println("Current not Flowing");
-        } else if (*(int *)(controllvr.Control2) == 0) {
+          Serial.println("Current2 Flowing");
+        }else if (*(int *)(controllvr.Control2) == 0) {
           digitalWrite(RLYPIN2, HIGH);
-          Serial.println("Current Flowing");
+          Serial.println("Current2 not Flowing");
         }
-        if (*(int *)(controllvr.RESUME) == 1) {
-          count = 0;
-        }
+        // if (*(int *)(controllvr.RESUME) == 1) {
+        //   count = 3;
+        // }
+        // else if (*(int *)(controllvr.RESUME) == 0) {
+        //   count = 4;
+        // }
         // Close the response struct container
         rsc.close();
       }
@@ -394,7 +395,7 @@ void openWeatherTask(void *parameter) {
 void SendopenWeatherTask(void *parameter) {
   (void)parameter;
   for (;;) {
-    if (count <= 3) {
+    if (count < 3) {
       xTaskCreatePinnedToCore(openWeatherTask, "OpenWeatherTask", 10000, NULL, 1, NULL, 0);
 
       // In ra thông tin thời tiết của từng ngày
@@ -434,6 +435,7 @@ void SendopenWeatherTask(void *parameter) {
       Serial.print("   Tốc độ gió tối đa: ");
       Serial.println(maxWindSpeed3);
 
+      // Lưu trữ thông tin thời tiết vào struct sendweather
       strcpy(sendweather.type, "SWR");
 
       *(float *)(sendweather.mintempday1) = minTemp1;
@@ -453,18 +455,16 @@ void SendopenWeatherTask(void *parameter) {
       *(uint16_t *)(sendweather.maxhumday3) = maxHumidity3;
       *(uint16_t *)(sendweather.maxpresday3) = maxPressure3;
       *(float *)(sendweather.maxwindday3) = maxWindSpeed3;
-
       vTaskDelay(500);
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 1, 0xA, &sendweather, sizeof(SendWeather));
-      Serial.println(rs.getResponseDescription());
-
       count++;
     }
-    // Tăng biến đếm sau mỗi lần hàm chạy
     if (count == 3) {  // Nếu đã chạy 3 lần
-      if (runEvery(28800000, &previousMillis1)) {
-        count = 0;
-      }
+      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 1, 0xA, &sendweather, sizeof(SendWeather));
+      Serial.println(rs.getResponseDescription());
+      count++;  // Tăng biến đếm để không lặp lại điều kiện này nữa
+    }
+    if (count > 3 && runEvery(28800000, &previousMillis1)) {
+      count = 0;  // Đặt lại biến đếm sau mỗi khoảng thời gian nhất định
     }
     vTaskDelay(1000);
   }
