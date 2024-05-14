@@ -72,7 +72,7 @@ uint16_t MOILFRM = 0;
 struct STATUSFB {
   byte dvc1[4];
   byte dvc2[4];
-  byte pumps[1];
+  byte pumps[4];
 } statusfb;
 
 struct SendTelegram {

@@ -84,7 +84,8 @@ struct ControlLVR {
   char type[4] = "CLV";
   byte Control1[4];
   byte Control2[4];
-  byte RESUME[4];
+  byte ControlPMEL[4];
+  // byte RESUME[4];
 } controllvr;
 uint8_t controldvc1 = 0;
 uint8_t controldvc2 = 0;
@@ -168,7 +169,7 @@ struct STATUSFB {
   char type[4] = "STB";
   byte dvc1[4];
   byte dvc2[4];
-  byte pumps[1];
+  byte pumps[4];
 } statusfb;
 
 unsigned long lastCheckTime = 0;
@@ -434,17 +435,17 @@ void ControlDVC_task(void *pvParameters) {
       Serial.println("======SEND DVC2 OFF============");
       CheckSwitch1 = false;
     }
-    if ((resume == 1) && (CheckResume == true)) {
-      controlrs = 1;
-      strcpy(controllvr.type, "CLV");
-      *(int *)(controllvr.RESUME) = controlrs;
-      Serial.println("======RESUME============");
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
-      resume = 0;
-      CheckResume = false;
-      controlrs = 0;
-      vTaskDelay(350 / portTICK_PERIOD_MS);
-    }
+    // if ((resume == 1) && (CheckResume == true)) {
+    //   controlrs = 1;
+    //   strcpy(controllvr.type, "CLV");
+    //   *(int *)(controllvr.RESUME) = controlrs;
+    //   Serial.println("======RESUME============");
+    //   ResponseStatus rs = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
+    //   resume = 0;
+    //   CheckResume = false;
+    //   controlrs = 0;
+    //   vTaskDelay(350 / portTICK_PERIOD_MS);
+    // }
     if ((DVC3 == 1) && (CheckSwitch2 == true)) {
       controlpump1 = 1;
 
@@ -457,6 +458,11 @@ void ControlDVC_task(void *pvParameters) {
       *(int *)(statusfb.pumps) = controlpump1;
       ResponseStatus rs1 = e32ttl100.sendFixedMessage(0, 2, 0xA, &statusfb, sizeof(STATUSFB));
       Serial.println(rs1.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
+
+      strcpy(controllvr.type, "CLV");
+      *(int *)(controllvr.ControlPMEL) = controlpump1;
+      ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
       vTaskDelay(350 / portTICK_PERIOD_MS);
 
       Serial.println("======SEND PUMP ON============");
@@ -474,6 +480,11 @@ void ControlDVC_task(void *pvParameters) {
       *(int *)(statusfb.pumps) = controlpump1;
       ResponseStatus rs1 = e32ttl100.sendFixedMessage(0, 2, 0xA, &statusfb, sizeof(STATUSFB));
       Serial.println(rs1.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
+
+      strcpy(controllvr.type, "CLV");
+      *(int *)(controllvr.ControlPMEL) = controlpump1;
+      ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
       vTaskDelay(350 / portTICK_PERIOD_MS);
       
       Serial.println("======SEND PUMP OFF============");

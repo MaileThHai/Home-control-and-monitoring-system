@@ -23,7 +23,8 @@ static int count = 0;
 struct ControlLVR {
   byte Control1[4];
   byte Control2[4];
-  byte RESUME[4];
+  byte ControlPMEL[4];
+  // byte RESUME[4];
 } controllvr;
 
 struct SendWeather {
@@ -159,6 +160,8 @@ void setup() {
   Serial.begin(9600);
   pinMode(RLYPIN1, OUTPUT);
   pinMode(RLYPIN2, OUTPUT);
+  digitalWrite(RLYPIN1, HIGH);
+  digitalWrite(RLYPIN2, HIGH);
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -215,12 +218,12 @@ void TaskREVControlLight(void *pvParameters) {
           digitalWrite(RLYPIN2, HIGH);
           Serial.println("Current2 not Flowing");
         }
-        // if (*(int *)(controllvr.RESUME) == 1) {
-        //   count = 3;
-        // }
-        // else if (*(int *)(controllvr.RESUME) == 0) {
-        //   count = 4;
-        // }
+        if (*(int *)(controllvr.ControlPMEL) == 1) {
+          Serial.println("PUMP Flowing");
+        }
+        else if (*(int *)(controllvr.ControlPMEL) == 0) {
+          Serial.println("PUMP NOT Flowing");
+        }
         // Close the response struct container
         rsc.close();
       }
