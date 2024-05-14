@@ -7,6 +7,8 @@ send control farm
 send alert sensor
 send 2 control - sensor
 (send control farm) control
+auto khi mưa or độ ẩm đất thấp
+send tele fix
 
 sensor:
 rev alert center
@@ -32,3 +34,5 @@ rev control center
 send sensor center
 send sensor sensor
 (send sensor farm) done
+
+
