@@ -752,11 +752,18 @@ void TimePump_task(void *pvParameters) {
       *(int *)(controlpump.Control1) = controlpump1;
       ResponseStatus rs = e32ttl100.sendFixedMessage(0, 4, 0xF, &controlpump, sizeof(ControlPump));
       Serial.println(rs.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
 
       strcpy(statusfb.type, "STB");
       *(int *)(statusfb.pumps) = controlpump1;
       ResponseStatus rs1 = e32ttl100.sendFixedMessage(0, 2, 0xA, &statusfb, sizeof(STATUSFB));
       Serial.println(rs1.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
+
+      strcpy(controllvr.type, "CLV");
+      *(int *)(controllvr.ControlPMEL) = controlpump1;
+      ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
+      vTaskDelay(350 / portTICK_PERIOD_MS);
       Serial.println("======SEND PUMP ON============");
       CheckTimeSVPump = false;
     }
@@ -768,11 +775,18 @@ void TimePump_task(void *pvParameters) {
       *(int *)(controlpump.Control1) = controlpump1;
       ResponseStatus rs = e32ttl100.sendFixedMessage(0, 4, 0xF, &controlpump, sizeof(ControlPump));
       Serial.println(rs.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
 
       strcpy(statusfb.type, "STB");
       *(int *)(statusfb.pumps) = controlpump1;
       ResponseStatus rs1 = e32ttl100.sendFixedMessage(0, 2, 0xA, &statusfb, sizeof(STATUSFB));
       Serial.println(rs1.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
+
+      strcpy(controllvr.type, "CLV");
+      *(int *)(controllvr.ControlPMEL) = controlpump1;
+      ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
+      vTaskDelay(350 / portTICK_PERIOD_MS);
 
       Serial.println("======SEND PUMP OFF============");
       lv_obj_clear_state(ui_SwitchDevice1FARM, LV_STATE_CHECKED);
@@ -787,11 +801,18 @@ void TimePump_task(void *pvParameters) {
       *(int *)(controlpump.Control1) = controlpump1;
       ResponseStatus rs = e32ttl100.sendFixedMessage(0, 4, 0xF, &controlpump, sizeof(ControlPump));
       Serial.println(rs.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
 
       strcpy(statusfb.type, "STB");
       *(int *)(statusfb.pumps) = controlpump1;
       ResponseStatus rs1 = e32ttl100.sendFixedMessage(0, 2, 0xA, &statusfb, sizeof(STATUSFB));
       Serial.println(rs1.getResponseDescription());
+      vTaskDelay(350 / portTICK_PERIOD_MS);
+
+      strcpy(controllvr.type, "CLV");
+      *(int *)(controllvr.ControlPMEL) = controlpump1;
+      ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
+      vTaskDelay(350 / portTICK_PERIOD_MS);
 
       Serial.println("======SEND PUMP PERIOD OFF============");
       lv_obj_clear_state(ui_SwitchDevice1FARM, LV_STATE_CHECKED);
