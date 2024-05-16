@@ -7,12 +7,17 @@
 #include <Wire.h>
 #include <WiFiClient.h>
 #include <WiFiClientSecure.h>
+#include <FirebaseESP32.h>
+#include "esp_task_wdt.h"
 
 const char *ssid = "HUY QUANG";
 const char *password = "khongbiet";
 
-LoRa_E32 e32ttl100(&Serial2, 15, 25, 33);
+#define FIREBASE_HOST "https://esp32-data-fb2d5-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define FIREBASE_AUTH "y9AzB0SNwyy4kReO3ot7wX3r2ZtWGPqrmFTD7ciZ"
+FirebaseData fbdo;
 
+LoRa_E32 e32ttl100(&Serial2, 15, 25, 33);
 // const int relay = 26;
 int ControlREV;
 #define RLYPIN1 26
@@ -26,6 +31,9 @@ struct ControlLVR {
   byte ControlPMEL[4];
   // byte RESUME[4];
 } controllvr;
+int ct1 = 0;
+int ct2 = 0;
+int ct3 = 0;
 
 struct SendWeather {
   char type[4] = "SWR";
@@ -120,33 +128,8 @@ void initializeWeatherData() {
   maxWindSpeed3 = 0;
 }
 
-String httpGETRequest(const char *serverName) {
-  WiFiClient client;
-  HTTPClient http;
-
-  // Your Domain name with URL path or IP address with path
-  http.begin(client, serverName);
-
-  // Send HTTP POST request
-  int httpResponseCode = http.GET();
-
-  String payload = "{}";
-
-  if (httpResponseCode > 0) {
-    // Serial.print("HTTP Response code: ");
-    // Serial.println(httpResponseCode);
-    payload = http.getString();
-  } else {
-    Serial.print("Error code: ");
-    Serial.println(httpResponseCode);
-  }
-  // Free resources
-  http.end();
-
-  return payload;
-}
-
 unsigned long previousMillis1 = 0;
+unsigned long previousMillis2 = 0;
 boolean runEvery(unsigned long interval, unsigned long *previousMillis) {
   unsigned long currentMillis = millis();
   if (currentMillis - *previousMillis >= interval) {
@@ -156,12 +139,15 @@ boolean runEvery(unsigned long interval, unsigned long *previousMillis) {
   return false;
 }
 
+SemaphoreHandle_t sendWeatherSemaphore;
+
 void setup() {
   Serial.begin(9600);
   pinMode(RLYPIN1, OUTPUT);
   pinMode(RLYPIN2, OUTPUT);
   digitalWrite(RLYPIN1, HIGH);
   digitalWrite(RLYPIN2, HIGH);
+  esp_task_wdt_deinit();
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -171,15 +157,19 @@ void setup() {
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  Firebase.reconnectWiFi(true);
+  //Firebase.setReadTimeout(fbdo, 1000 * 60);
+  Firebase.setwriteSizeLimit(fbdo, "tiny");
 
   e32ttl100.begin();
 
   // Khởi tạo giá trị ban đầu cho biến weatherDataFor3Days
   initializeWeatherData();
 
-  // Tạo task FreeRTOS để gọi hàm openWeatherTask
-  xTaskCreatePinnedToCore(TaskREVControlLight, "TaskREVControlLight", 10000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(SendopenWeatherTask, "SendopenWeatherTask", 50000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(SendopenWeatherTask, "SendopenWeatherTask", 20000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(TaskREVControlLight, "TaskREVControlLight", 30000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(TaskDataFirebase, "TaskDataFirebase", 40000, NULL, 1, NULL, 0);
 }
 
 void loop() {
@@ -189,9 +179,6 @@ void loop() {
 void TaskREVControlLight(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    // Serial.print("TaskControlLight: ");
-    // Serial.println(xPortGetCoreID());
-
     if (e32ttl100.available() > 1) {
       char type[4];
       ResponseContainer rs = e32ttl100.receiveInitialMessage(sizeof(type));
@@ -207,22 +194,27 @@ void TaskREVControlLight(void *pvParameters) {
           // Bật LED
           digitalWrite(RLYPIN1, LOW);
           Serial.println("Current1 Flowing");
+          ct1 = 1;
         } else if (*(int *)(controllvr.Control1) == 0) {
           digitalWrite(RLYPIN1, HIGH);
           Serial.println("Current1 not Flowing");
+          ct1 = 0;
         }
         if (*(int *)(controllvr.Control2) == 1) {
           digitalWrite(RLYPIN2, LOW);
           Serial.println("Current2 Flowing");
-        }else if (*(int *)(controllvr.Control2) == 0) {
+          ct2 = 1;
+        } else if (*(int *)(controllvr.Control2) == 0) {
           digitalWrite(RLYPIN2, HIGH);
           Serial.println("Current2 not Flowing");
+          ct2 = 0;
         }
         if (*(int *)(controllvr.ControlPMEL) == 1) {
           Serial.println("PUMP Flowing");
-        }
-        else if (*(int *)(controllvr.ControlPMEL) == 0) {
+          ct3 = 1;
+        } else if (*(int *)(controllvr.ControlPMEL) == 0) {
           Serial.println("PUMP NOT Flowing");
+          ct3 = 0;
         }
         // Close the response struct container
         rsc.close();
@@ -270,6 +262,24 @@ void TaskREVControlLight(void *pvParameters) {
 
 void openWeatherTask(void *parameter) {
   (void)parameter;
+  auto httpGETRequest = [](const char *serverName) {
+    WiFiClient client;
+    HTTPClient http;
+    http.begin(client, serverName);
+    int httpResponseCode = http.GET();
+    String payload = "{}";
+
+    if (httpResponseCode > 0) {
+      payload = http.getString();
+    } else {
+      Serial.print("Error code: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end();
+    return payload;
+  };
+
   String serverPath = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&exclude=hourly" + "&appid=" + openWeatherMapApiKey + "&cnt=" + String(desiredHourCount);
   strjsonBuffer = httpGETRequest(serverPath.c_str());
   JsonObject &myObject = jsonBuffer.parseObject(strjsonBuffer);
@@ -391,7 +401,6 @@ void openWeatherTask(void *parameter) {
   }
 
   jsonBuffer.clear();  // Giải phóng bộ nhớ của ArduinoJSON
-
   vTaskDelete(NULL);
 }
 
@@ -399,7 +408,8 @@ void SendopenWeatherTask(void *parameter) {
   (void)parameter;
   for (;;) {
     if (count < 3) {
-      xTaskCreatePinnedToCore(openWeatherTask, "OpenWeatherTask", 10000, NULL, 1, NULL, 0);
+
+      xTaskCreatePinnedToCore(openWeatherTask, "OpenWeatherTask", 10000, NULL, 1, NULL, 1);
 
       // In ra thông tin thời tiết của từng ngày
       Serial.println("Ngày 1:");
@@ -470,5 +480,58 @@ void SendopenWeatherTask(void *parameter) {
       count = 0;  // Đặt lại biến đếm sau mỗi khoảng thời gian nhất định
     }
     vTaskDelay(1000);
+  }
+}
+
+void TaskDataFirebase(void *pvParameters) {
+  (void)pvParameters;
+  for (;;) {
+    if (runEvery(5000, &previousMillis2)) {
+      int co21 = 99;
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Temperature", tLVR);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Humidity", hLVR);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/CO2", co21);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/TVOC", TVOCLVR);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Flame", FLMLVR);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Smoke", SMKLVR);
+      if (FLMLVR <= 50) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FlameSensor", "Fire!!!");
+
+      } else if (FLMLVR > 50) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FlameSensor", "Safe");
+      }
+      if (SMKLVR > 500) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_SmokeSensor", "Smoke detected!");
+      } else if (SMKLVR < 500) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_SmokeSensor", "No Smoke");
+      }
+
+      Firebase.setFloat(fbdo, "/DataSensor/Farm/Temperature", tFRM);
+      Firebase.setFloat(fbdo, "/DataSensor/Farm/Humidity", hFRM);
+      Firebase.setFloat(fbdo, "/DataSensor/Farm/Moil", MOILFRM);
+      if (RAINFRM == 0) {
+        Firebase.setString(fbdo, "/DataSensor/Farm/Status_RainSensor", "Rain!!!");
+      } else if (RAINFRM == 1) {
+        Firebase.setString(fbdo, "/DataSensor/Farm/Status_RainSensor", "No Detect");
+      }
+      if (ct1 == 1) {
+        Serial.println("1");
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_Light", "ON");
+      } if (ct1 == 0) {
+        Serial.println("0");
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_Light", "OFF");
+      }
+      if (ct2 == 1) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FAN", "ON");
+      } if (ct2 == 0) {
+        Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FAN", "OFF");
+      }
+      if (ct3 == 1) {
+        Firebase.setString(fbdo, "/DataSensor/Farm/Status_Pump1", "ON");
+      } if (ct3 == 0) {
+        Firebase.setString(fbdo, "/DataSensor/Farm/Status_Pump1", "OFF");
+      }
+    }
+    vTaskDelay(350);
   }
 }

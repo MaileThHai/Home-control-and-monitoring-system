@@ -41,7 +41,6 @@ float t, h;
 int co2, tvoc, sensorValue, MP4Value;
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
-String typeStr;
 
 void TaskReadDataSSLVR(void *pvParameters);
 void TaskSendDataLVR(void *pvParameters);
@@ -244,7 +243,7 @@ void TaskREVPASSWORD(void *pvParameters) {
     if (e32ttl100.available() > 1) {
       char type[4];
       ResponseContainer rs = e32ttl100.receiveInitialMessage(sizeof(type));
-      typeStr = rs.data;
+      String typeStr = rs.data;
 
       Serial.println(typeStr);
       if (typeStr == "STB") {

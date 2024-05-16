@@ -14,12 +14,13 @@ sensor:
 rev alert center
 rev 2 control từ center đẩy firebase
 rev sensor farm
-đẩy all data -> firebase
+đẩy all data -> firebase X
 send sensor center
 (send sensor control) done V
 (rev web qua firebase -> send center)
 *(rev wt forecast control)
 CCS811 cháy
+(đẩy all dữ liệu lên gg excel) done đẩy data gán
 
 
 control ArduinoJson 5.12
@@ -29,10 +30,14 @@ send wt forecast center
 (rev sensor farm) done
 (rev control farm từ center) done V
 *(send wt forecast sensor)
-(đẩy all dữ liệu lên gg excel)
+(đẩy all dữ liệu lên gg excel) X
+(đẩy all data -> firebase) V
 
 farm
 rev control center
 send sensor center
 send sensor sensor
-(send sensor farm) done
+(send sensor farm - Control ) done
+
+check lora center (no rev wt fc)
+control not send fb

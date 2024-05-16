@@ -169,7 +169,7 @@ struct STATUSFB {
   char type[4] = "STB";
   byte dvc1[4];
   byte dvc2[4];
-  byte pumps[4];
+  byte pumps[1];
 } statusfb;
 
 unsigned long lastCheckTime = 0;
@@ -185,7 +185,18 @@ uint8_t ALCO2 = 0;
 uint8_t ALFR = 0;
 uint8_t ALSM = 0;
 
-
+unsigned long previousMillis1 = 0;
+unsigned long previousMillis2 = 0;
+unsigned long previousMillis3 = 0;
+unsigned long previousMillis4 = 0;
+boolean runEvery(unsigned long interval, unsigned long *previousMillis) {
+  unsigned long currentMillis = millis();
+  if (currentMillis - *previousMillis >= interval) {
+    *previousMillis = currentMillis;
+    return true;
+  }
+  return false;
+}
 /* ====================
  * Function Prototypes 
  * ==================== */
@@ -486,7 +497,7 @@ void ControlDVC_task(void *pvParameters) {
       *(int *)(controllvr.ControlPMEL) = controlpump1;
       ResponseStatus rs2 = e32ttl100.sendFixedMessage(0, 3, 0xA, &controllvr, sizeof(ControlLVR));
       vTaskDelay(350 / portTICK_PERIOD_MS);
-      
+
       Serial.println("======SEND PUMP OFF============");
       CheckSwitch2 = false;
     }
@@ -635,14 +646,14 @@ void CheckEventSensor() {
   if (tLVR > 38) {
     checkTemp = true;
   }
-  if (FLMLVR < 50) {
-    // checkFire = true;
+  if (FLMLVR > 0 && FLMLVR < 50) {
+    checkFire = true;
   }
   if (SMKLVR > 500) {
     checkSmoke = true;
   }
-  if (CO2LVR > 1000) {
-    // checkCO2 = true;
+  if (CO2LVR > 2000) {
+    checkCO2 = true;
   }
 }
 void SendTelegram_task(void *pvParameters) {
@@ -658,53 +669,61 @@ void SendTelegram_task(void *pvParameters) {
       Serial.println(rs.getResponseDescription());
       Serial.println("======SEND Alert PW============");
       ForgotPW = false;
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(350 / portTICK_PERIOD_MS);
     }
     if (checkTemp == true) {
-      ALTM = 1;
-      strcpy(sendtelegram.type, "SAL");
-      *(int *)(sendtelegram.AlertTemp) = ALTM;
+      if (runEvery(5000, &previousMillis1)) {
+        ALTM = 1;
+        strcpy(sendtelegram.type, "SAL");
+        *(int *)(sendtelegram.AlertTemp) = ALTM;
 
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-      Serial.println(rs.getResponseDescription());
-      Serial.println("======SEND Alert Temp============");
+        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
+        Serial.println(rs.getResponseDescription());
+        Serial.println("======SEND Alert Temp============");
+      }
       checkTemp = false;
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(350 / portTICK_PERIOD_MS);
     }
     if (checkFire == true) {
-      ALFR = 1;
-      strcpy(sendtelegram.type, "SAL");
-      *(int *)(sendtelegram.AlertFire) = ALFR;
+      if (runEvery(5000, &previousMillis2)) {
+        ALFR = 1;
+        strcpy(sendtelegram.type, "SAL");
+        *(int *)(sendtelegram.AlertFire) = ALFR;
 
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-      Serial.println(rs.getResponseDescription());
-      Serial.println("======SEND Alert Fire============");
+        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
+        Serial.println(rs.getResponseDescription());
+        Serial.println("======SEND Alert Fire============");
+      }
       checkFire = false;
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(350 / portTICK_PERIOD_MS);
     }
     if (checkSmoke == true) {
-      ALSM = 1;
-      strcpy(sendtelegram.type, "SAL");
-      *(int *)(sendtelegram.AlertSmoke) = ALSM;
+      if (runEvery(5000, &previousMillis3)) {
+        ALSM = 1;
+        strcpy(sendtelegram.type, "SAL");
+        *(int *)(sendtelegram.AlertSmoke) = ALSM;
 
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-      Serial.println(rs.getResponseDescription());
-      Serial.println("======SEND Alert SMoke============");
+        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
+        Serial.println(rs.getResponseDescription());
+        Serial.println("======SEND Alert SMoke============");
+      }
       checkSmoke = false;
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(350 / portTICK_PERIOD_MS);
     }
     if (checkCO2 == true) {
-      ALCO2 = 1;
-      strcpy(sendtelegram.type, "SAL");
-      *(int *)(sendtelegram.AlertCO2) = ALCO2;
+      if (runEvery(5000, &previousMillis4)) {
+        ALCO2 = 1;
+        strcpy(sendtelegram.type, "SAL");
+        *(int *)(sendtelegram.AlertCO2) = ALCO2;
 
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-      Serial.println(rs.getResponseDescription());
-      Serial.println("======SEND Alert CO2============");
+        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
+        Serial.println(rs.getResponseDescription());
+        Serial.println("======SEND Alert CO2============");
+      }
       checkCO2 = false;
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(350 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(15000 / portTICK_PERIOD_MS);
+    vTaskDelay(350 / portTICK_PERIOD_MS);
   }
 }
 void TimePump_task(void *pvParameters) {
