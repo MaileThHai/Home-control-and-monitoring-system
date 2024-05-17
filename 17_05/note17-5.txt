@@ -1,0 +1,41 @@
+center:
+rev sensor liv
+rev sensor farm
+rev wt forecast control
+send control control
+send control farm
+send alert sensor
+send 2 control - sensor
+(send control farm) control done V
+(auto khi mưa or độ ẩm đất thấp, auto bật/tắt đèn) ****
+(send tele fix)Done V
+
+sensor:
+rev alert center
+rev 2 control từ center đẩy firebase
+rev sensor farm
+đẩy all data -> firebase X
+send sensor center
+(send sensor control) done V
+(rev web qua firebase -> send center)
+*(rev wt forecast control)
+CCS811 cháy
+(đẩy all dữ liệu lên gg excel) done V
+
+
+control ArduinoJson 5.12
+rev control center
+send wt forecast center
+(rev sensor sensor) done
+(rev sensor farm) done
+(rev control farm từ center) done V
+*(send wt forecast sensor)
+(đẩy all dữ liệu lên gg excel) X
+(đẩy all data -> firebase) V
+(rev alert phát loa)	***********
+
+farm
+rev control center
+send sensor center
+send sensor sensor
+(send sensor farm - Control ) done
