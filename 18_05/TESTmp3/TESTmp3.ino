@@ -1,35 +1,47 @@
-#include "SoftwareSerial.h"
+#include "Arduino.h"
 #include "DFRobotDFPlayerMini.h"
 
-// Use pins 2 and 3 to communicate with DFPlayer Mini
-static const uint8_t PIN_MP3_TX = 4; // Connects to module's RX 
-static const uint8_t PIN_MP3_RX = 5; // Connects to module's TX 
-SoftwareSerial softwareSerial(PIN_MP3_RX, PIN_MP3_TX);
+#define FPSerial Serial1
 
-// Create the Player object
-DFRobotDFPlayerMini player;
+DFRobotDFPlayerMini myDFPlayer;
 
 void setup() {
+  FPSerial.begin(9600, SERIAL_8N1, 27, 26);
 
-  // Init USB serial port for debugging
-  Serial.begin(9600);
-  // Init serial port for DFPlayer Mini
-  softwareSerial.begin(9600);
+  Serial.begin(115200);
 
-  // Start communication with DFPlayer Mini
-  if (player.begin(softwareSerial)) {
-   Serial.println("OK");
+  Serial.println();
+  Serial.println(F("DFRobot DFPlayer Mini Demo"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
 
-    // Set volume to maximum (0 to 30).
-    player.volume(20);
-    // Play the first MP3 file on the SD card
-    player.play(1);
-  } else {
-    Serial.println("Connecting to DFPlayer Mini failed!");
+  if (!myDFPlayer.begin(FPSerial, /*isACK = */ true, /*doReset = */ true)) {  //Use serial to communicate with mp3.
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while (true) {
+      delay(0);  // Code to compatible with ESP8266 watch dog.
+    }
   }
+  Serial.println(F("DFPlayer Mini online."));
+
+  myDFPlayer.volume(27);  //Set volume value. From 0 to 30
 }
 
 void loop() {
-
- 
-   }
+  myDFPlayer.playMp3Folder(1);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(2);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(3);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(2);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(5);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(2);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(7);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+  myDFPlayer.playMp3Folder(2);  //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+  delay(15000);
+}

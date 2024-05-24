@@ -8,6 +8,8 @@
 #include <WiFiClient.h>
 #include <WiFiClientSecure.h>
 #include <FirebaseESP32.h>
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
 #include "esp_task_wdt.h"
 
 const char *ssid = "HUY QUANG";
@@ -17,11 +19,14 @@ const char *password = "khongbiet";
 #define FIREBASE_AUTH "y9AzB0SNwyy4kReO3ot7wX3r2ZtWGPqrmFTD7ciZ"
 FirebaseData fbdo;
 
-LoRa_E32 e32ttl100(&Serial2, 15, 25, 33);
+LoRa_E32 e32ttl100(&Serial2, 15, 12, 13);
 // const int relay = 26;
 int ControlREV;
-#define RLYPIN1 26
-#define RLYPIN2 27
+#define RLYPIN1 32
+#define RLYPIN2 33
+
+#define FPSerial Serial1
+DFRobotDFPlayerMini myDFPlayer;
 
 String openWeatherMapApiKey = "8abc699afb41ebfb14b3913e4d627245";
 static int count = 0;
@@ -80,6 +85,11 @@ uint16_t TVOCLVR = 0;
 uint16_t FLMLVR = 0;
 uint16_t SMKLVR = 0;
 
+int checktemp = 0;
+int checkco2 = 0;
+int checkfire = 0;
+int checksmoke = 0;
+
 String strjsonBuffer;
 DynamicJsonBuffer jsonBuffer;
 
@@ -129,6 +139,7 @@ void initializeWeatherData() {
 
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
+unsigned long previousMillis3 = 0;
 boolean runEvery(unsigned long interval, unsigned long *previousMillis) {
   unsigned long currentMillis = millis();
   if (currentMillis - *previousMillis >= interval) {
@@ -166,6 +177,23 @@ String httpGETRequest(const char *serverName) {
 
 SemaphoreHandle_t taskmutex;
 
+int sttfire = 0;
+int sttsmoke = 0;
+int sttco2 = 0;
+int stttemp = 0;
+unsigned long previousMillis4 = 0;
+unsigned long previousMillis5 = 0;
+unsigned long previousMillis6 = 0;
+unsigned long previousMillis7 = 0;
+unsigned long audioStartMillis = 0;
+unsigned long audioDuration = 0;
+enum AlertState { NO_ALERT,
+                  TEMP_ALERT,
+                  FIRE_ALERT,
+                  SMOKE_ALERT,
+                  CO2_ALERT };
+AlertState currentAlert = NO_ALERT;
+
 void setup() {
   Serial.begin(9600);
   pinMode(RLYPIN1, OUTPUT);
@@ -173,6 +201,19 @@ void setup() {
   digitalWrite(RLYPIN1, HIGH);
   digitalWrite(RLYPIN2, HIGH);
   esp_task_wdt_deinit();
+
+  FPSerial.begin(9600, SERIAL_8N1, 27, 26);
+  if (!myDFPlayer.begin(FPSerial, /*isACK = */ true, /*doReset = */ true)) {  //Use serial to communicate with mp3.
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while (true) {
+      delay(0);  // Code to compatible with ESP8266 watch dog.
+    }
+  }
+  Serial.println(F("DFPlayer Mini online."));
+  myDFPlayer.volume(29);  //Set volume value. From 0 to 30
+
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -195,6 +236,7 @@ void setup() {
 
   xTaskCreatePinnedToCore(SendopenWeatherTask, "SendopenWeatherTask", 15000, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskREVData, "TaskREVData", 15000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(TaskAlert, "TaskAlert", 4096, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskDataFirebase, "TaskDataFirebase", 15000, NULL, 2, NULL, 0);
 }
 
@@ -205,8 +247,8 @@ void loop() {
 void TaskREVData(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
-      ;
+    // while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
+    //   ;
     if (e32ttl100.available() > 1) {
       char type[4];
       ResponseContainer rs = e32ttl100.receiveInitialMessage(sizeof(type));
@@ -284,7 +326,7 @@ void TaskREVData(void *pvParameters) {
       } else {
       }
     }
-    xSemaphoreGive(taskmutex);
+    // xSemaphoreGive(taskmutex);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
   }
 }
@@ -492,22 +534,22 @@ void TaskDataFirebase(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
     if (runEvery(15000, &previousMillis2)) {
-      int co21 = 97;
+      int co21 = 99;
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Temperature", tLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Humidity", hLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/CO2", co21);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/TVOC", TVOCLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Flame", FLMLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Smoke", SMKLVR);
-      if (FLMLVR <= 50) {
+      if ((FLMLVR > 0) && (FLMLVR < 50)) {
         Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FlameSensor", "Fire!!!");
 
       } else if (FLMLVR > 50) {
         Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_FlameSensor", "Safe");
       }
-      if (SMKLVR > 500) {
+      if (SMKLVR > 700) {
         Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_SmokeSensor", "Smoke detected!");
-      } else if (SMKLVR < 500) {
+      } else if (SMKLVR < 700) {
         Firebase.setString(fbdo, "/DataSensor/LivingRoom/Status_SmokeSensor", "No Smoke");
       }
 
@@ -539,6 +581,83 @@ void TaskDataFirebase(void *pvParameters) {
       if (ct3 == 0) {
         Firebase.setString(fbdo, "/DataSensor/Farm/Status_Pump1", "OFF");
       }
+    }
+    vTaskDelay(350);
+  }
+}
+
+void TaskAlert(void *pvParameters) {
+  (void)pvParameters;
+  for (;;) {
+    if (FLMLVR > 0 && FLMLVR < 50) {
+      checkfire = 1;
+    } else if (FLMLVR > 50) {
+      checkfire = 0;
+    }
+    if (SMKLVR > 700) {
+      checksmoke = 1;
+    } else if (SMKLVR < 700) {
+      checksmoke = 0;
+    }
+    if (tLVR > 37) {
+      checktemp = 1;
+    } else if (tLVR < 37) {
+      checktemp = 0;
+    }
+    if (CO2LVR > 1500) {
+      checkco2 = 1;
+    } else if (CO2LVR < 1500) {
+      checkco2 = 0;
+    }
+
+    if (currentAlert == NO_ALERT && runEvery(5000, &previousMillis3)) {
+      if ((checkfire == 1) && (sttfire == 0)) {
+        Serial.println("SendAlertFire...");
+        myDFPlayer.playMp3Folder(1);
+        currentAlert = FIRE_ALERT;
+        audioDuration = 31000;
+        audioStartMillis = millis();
+        sttfire = 1;
+      } else if ((checksmoke == 1) && (sttsmoke == 0)) {
+        Serial.println("SendAlertSmoke...");
+        myDFPlayer.playMp3Folder(2);
+        currentAlert = SMOKE_ALERT;
+        audioDuration = 31000;
+        audioStartMillis = millis();
+        sttsmoke = 1;
+      } else if ((checkco2 == 1) && (sttco2 == 0)) {
+        Serial.println("SendAlertCO2...");
+        myDFPlayer.playMp3Folder(3);
+        currentAlert = CO2_ALERT;
+        audioDuration = 31000;
+        audioStartMillis = millis();
+        sttco2 = 1;
+      } else if ((checktemp == 1) && (stttemp == 0)) {
+        Serial.println("SendAlertTemp...");
+        myDFPlayer.playMp3Folder(4);
+        currentAlert = TEMP_ALERT;
+        audioDuration = 31000;
+        audioStartMillis = millis();
+        stttemp = 1;
+      }
+    }
+
+    if (currentAlert != NO_ALERT) {
+      if (millis() - audioStartMillis >= audioDuration) {
+        currentAlert = NO_ALERT;
+      }
+    }
+    if ((sttfire == 1) && runEvery(150000, &previousMillis4)) {
+      sttfire = 0;
+    }
+    if (sttsmoke == 1 && runEvery(150000, &previousMillis5)) {
+      sttsmoke = 0;
+    }
+    if (sttco2 == 1 && runEvery(150000, &previousMillis6)) {
+      sttco2 = 0;
+    }
+    if (stttemp == 1 && runEvery(150000, &previousMillis7)) {
+      stttemp = 0;
     }
     vTaskDelay(350);
   }

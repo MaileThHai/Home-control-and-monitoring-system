@@ -29,10 +29,15 @@ LoRa_E32 e32ttl100(&Serial2, 15, 25, 33);
 
 float t, h;
 int co2, tvoc, sensorValue, MP4Value;
+int checktemp = 0;
+int checkco2 = 0;
+int checkfire = 0;
+int checksmoke = 0;
 
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
 unsigned long previousMillis3 = 0;
+unsigned long previousMillis4 = 0;
 
 struct DataSensorLVR {
   char type[4] = "LVR";
@@ -62,11 +67,7 @@ String sttsmoke;
 String sttrain;
 
 struct SendTelegram {
-  byte AlertPassword[2];
-  byte AlertTemp[2];
-  byte AlertFire[2];
-  byte AlertSmoke[2];
-  byte AlertCO2[2];
+  byte AlertPassword[4];
 } sendtelegram;
 
 struct ControlLVR {
@@ -119,7 +120,7 @@ void setup() {
   TaskMutex = xSemaphoreCreateMutex();
   xTaskCreatePinnedToCore(TaskReadDataSSLVR, "TaskReadDataSSLVR", 8000, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskSendDataLVR, "TaskSendDataLVR", 10000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(SendDataSheetTask, "SendDataSheetTask", 50000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(SendDataSheetTask, "SendDataSheetTask", 20000, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskRevDataLVR, "TaskRevDataLVR", 10000, NULL, 1, NULL, 1);
 }
 void loop() {
@@ -151,16 +152,50 @@ void TaskReadDataSSLVR(void *pvParameters) {
       sensorValue = analogRead(Fire_GPIO);
       //SMOKE//
       MP4Value = analogRead(MP4_GPIO);
+      Serial.println(MP4Value);
 
-      if (sensorValue < 50) {
+      if (sensorValue > 0 && sensorValue < 50) {
         sttfire = "Detect";
+        checkfire = 1;
       } else if (sensorValue > 50) {
         sttfire = "NoDetect";
+        checkfire = 0;
       }
-      if (MP4Value > 500) {
+      if (MP4Value > 700) {
         sttsmoke = "Detect";
-      } else if (MP4Value < 500) {
+        checksmoke = 1;
+      } else if (MP4Value < 700) {
         sttsmoke = "NoDetect";
+        checksmoke = 0;
+      }
+      if (t > 37) {
+        checktemp = 1;
+      } else if (t < 37) {
+        checktemp = 0;
+      }
+      if (co2 > 1500) {
+        checkco2 = 1;
+      } else if (co2 < 1500) {
+        checkco2 = 0;
+      }
+    }
+    if (runEvery(5000, &previousMillis4)) {
+      if (checktemp == 1) {
+        Serial.println("SendAlertTemp...");
+        String messageTemp = "Cảnh báo: Nhiệt độ vượt quá 37°C! Nhiệt độ hiện tại: " + String(t) + "°C";
+        bot.sendMessage(CHAT_ID, messageTemp, "");
+      } else if (checkfire == 1) {
+        Serial.println("SendAlertFire...");
+        String messageFire = "Cảnh báo: Phát hiện có lửa!!!!";
+        bot.sendMessage(CHAT_ID, messageFire, "");
+      } else if (checksmoke == 1) {
+        Serial.println("SendAlertSmoke...");
+        String messageSmoke = "Cảnh báo: Phát hiện có khói!!!!";
+        bot.sendMessage(CHAT_ID, messageSmoke, "");
+      } else if (checkco2 == 1) {
+        Serial.println("SendAlertCO2...");
+        String messageCO2 = "Cảnh báo: Nồng độ khí CO2 cao!!! Nồng độ khí CO2 hiện tại: " + String(co2) + "ppm";
+        bot.sendMessage(CHAT_ID, messageCO2, "");
       }
     }
     vTaskDelay(350);
@@ -235,26 +270,9 @@ void TaskRevDataLVR(void *pvParameters) {
           Serial.println("SendPassWord...");
           String message = "Password mới của bạn là: 165970";
           bot.sendMessage(CHAT_ID, message, "");
-        } else if (*(int *)(sendtelegram.AlertTemp) == 1) {
-          Serial.println("SendAlertTemp...");
-          String messageTemp = "Cảnh báo: Nhiệt độ vượt quá 35°C! Nhiệt độ hiện tại: " + String(t) + "°C";
-          bot.sendMessage(CHAT_ID, messageTemp, "");
-        } else if (*(int *)(sendtelegram.AlertFire) == 1) {
-          Serial.println("SendAlertFire...");
-          String messageFire = "Cảnh báo: Phát hiện có lửa!!!!";
-          bot.sendMessage(CHAT_ID, messageFire, "");
-        } else if (*(int *)(sendtelegram.AlertSmoke) == 1) {
-          Serial.println("SendAlertSmoke...");
-          String messageSmoke = "Cảnh báo: Phát hiện có khói!!!!";
-          bot.sendMessage(CHAT_ID, messageSmoke, "");
-        } else if (*(int *)(sendtelegram.AlertCO2) == 1) {
-          Serial.println("SendAlertCO2...");
-          String messageCO2 = "Cảnh báo: Nồng độ khí CO2 cao!!! Nồng độ khí CO2 hiện tại: " + String(co2) + "ppm";
-          bot.sendMessage(CHAT_ID, messageCO2, "");
         }
         rsc.close();
-      }
-      else if (typeStr == "CLV") {
+      } else if (typeStr == "CLV") {
         ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(ControlLVR));
         struct ControlLVR controllvr = *(ControlLVR *)rsc.data;
 
@@ -297,7 +315,7 @@ void SendDataSheetTask(void *parameter) {
   for (;;) {
     if (runEvery(60000, &previousMillis1)) {
       while (xSemaphoreTake(TaskMutex, portMAX_DELAY) != pdTRUE)
-        ;
+      //   ;
       if (WiFi.status() == WL_CONNECTED) {
         // Create a URL for sending or writing data to Google Sheets.
         String Send_Data_URL = Web_App_URL + "?sts=write";

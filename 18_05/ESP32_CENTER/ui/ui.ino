@@ -82,9 +82,6 @@ unsigned long elapsedTime = 0;
 float timerain = 0;
 int stoptimer = 0;
 
-
-
-
 // Define task handle
 SemaphoreHandle_t uiMutex;
 
@@ -168,25 +165,12 @@ uint16_t wpres3 = 0;
  * ==================== */
 struct SendTelegram {
   char type[4] = "SAL";
-  byte AlertPassword[2];
-  byte AlertTemp[2];
-  byte AlertFire[2];
-  byte AlertSmoke[2];
-  byte AlertCO2[2];
+  byte AlertPassword[4];
 } sendtelegram;
 
 unsigned long lastCheckTime = 0;
 bool ForgotPW = false;
-bool checkTemp = false;
-bool checkCO2 = false;
-bool checkFire = false;
-bool checkSmoke = false;
-bool checkTimeTG = false;
 uint8_t ALPW = 0;
-uint8_t ALTM = 0;
-uint8_t ALCO2 = 0;
-uint8_t ALFR = 0;
-uint8_t ALSM = 0;
 
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
@@ -376,7 +360,6 @@ void SetTime_task(void *pvParameters) {
 }
 void ControlDVC_task(void *pvParameters) {
   while (1) {
-    vTaskDelay(350 / portTICK_PERIOD_MS);
     // ResponseStatus rs;
     if ((DVC1 == 1) && (CheckSwitch == true)) {
       controldvc1 = 1;
@@ -466,6 +449,7 @@ void ControlDVC_task(void *pvParameters) {
       Serial.println("======SEND PUMP OFF============");
       CheckSwitch2 = false;
     }
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void REVDataSensor_task(void *pvParameters) {
@@ -585,15 +569,15 @@ void DisplaySensor_task(void *pvParameters) {
     lv_label_set_text_fmt(ui_ValHumFarm, "%d", (int)hFRM);
     lv_label_set_text_fmt(ui_ValSoilFarm, "%d", MOILFRM);
 
-    if (FLMLVR <= 50) {
+    if (( FLMLVR > 0) && (FLMLVR < 50)) {
       lv_label_set_text(ui_ValFireSSLVR, "Detect");
     } else if (FLMLVR > 50) {
       lv_label_set_text(ui_ValFireSSLVR, "No Detect");
     }
 
-    if (SMKLVR > 300) {
+    if (SMKLVR > 700) {
       lv_label_set_text(ui_ValSmokeSSLVR, "Detect");
-    } else if (SMKLVR < 300) {
+    } else if (SMKLVR < 700) {
       lv_label_set_text(ui_ValSmokeSSLVR, "No Detect");
     }
 
@@ -607,23 +591,9 @@ void DisplaySensor_task(void *pvParameters) {
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
-void CheckEventSensor() {
-  if (tLVR > 38) {
-    checkTemp = true;
-  }
-  if (FLMLVR > 0 && FLMLVR < 50) {
-    checkFire = true;
-  }
-  if (SMKLVR > 500) {
-    checkSmoke = true;
-  }
-  if (CO2LVR > 2000) {
-    checkCO2 = true;
-  }
-}
+
 void SendTelegram_task(void *pvParameters) {
   while (1) {
-    CheckEventSensor();
     if (ForgotPW == true) {
       ALPW = 1;
 
@@ -634,58 +604,6 @@ void SendTelegram_task(void *pvParameters) {
       Serial.println(rs.getResponseDescription());
       Serial.println("======SEND Alert PW============");
       ForgotPW = false;
-      vTaskDelay(350 / portTICK_PERIOD_MS);
-    }
-    if (checkTemp == true) {
-      if (runEvery(5000, &previousMillis1)) {
-        ALTM = 1;
-        strcpy(sendtelegram.type, "SAL");
-        *(int *)(sendtelegram.AlertTemp) = ALTM;
-
-        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-        Serial.println(rs.getResponseDescription());
-        Serial.println("======SEND Alert Temp============");
-      }
-      checkTemp = false;
-      vTaskDelay(350 / portTICK_PERIOD_MS);
-    }
-    if (checkFire == true) {
-      if (runEvery(5000, &previousMillis2)) {
-        ALFR = 1;
-        strcpy(sendtelegram.type, "SAL");
-        *(int *)(sendtelegram.AlertFire) = ALFR;
-
-        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-        Serial.println(rs.getResponseDescription());
-        Serial.println("======SEND Alert Fire============");
-      }
-      checkFire = false;
-      vTaskDelay(350 / portTICK_PERIOD_MS);
-    }
-    if (checkSmoke == true) {
-      if (runEvery(5000, &previousMillis3)) {
-        ALSM = 1;
-        strcpy(sendtelegram.type, "SAL");
-        *(int *)(sendtelegram.AlertSmoke) = ALSM;
-
-        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-        Serial.println(rs.getResponseDescription());
-        Serial.println("======SEND Alert SMoke============");
-      }
-      checkSmoke = false;
-      vTaskDelay(350 / portTICK_PERIOD_MS);
-    }
-    if (checkCO2 == true) {
-      if (runEvery(5000, &previousMillis4)) {
-        ALCO2 = 1;
-        strcpy(sendtelegram.type, "SAL");
-        *(int *)(sendtelegram.AlertCO2) = ALCO2;
-
-        ResponseStatus rs = e32ttl100.sendFixedMessage(0, 2, 0xA, &sendtelegram, sizeof(SendTelegram));
-        Serial.println(rs.getResponseDescription());
-        Serial.println("======SEND Alert CO2============");
-      }
-      checkCO2 = false;
       vTaskDelay(350 / portTICK_PERIOD_MS);
     }
     vTaskDelay(350 / portTICK_PERIOD_MS);
@@ -850,7 +768,7 @@ void TimerAuto_task(void *pvParameters) {
         Serial.println(" phút");
       }
     }
-    if (timerain > 45){
+    if (timerain > 45) {
       stoptimer = 1;
     }
 
