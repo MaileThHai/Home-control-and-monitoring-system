@@ -45,8 +45,6 @@ void setup() {
   Serial.begin(9600);
   pinMode(RelayBom, OUTPUT);
   pinMode(RelayBom1, OUTPUT);
-  digitalWrite(RelayBom, HIGH);
-  digitalWrite(RelayBom1, HIGH);
   e32ttl100.begin();
 
   xTaskCreatePinnedToCore(TaskReadDataSSFARM, "TaskReadDataSSFARM", 10000, NULL, 1, NULL, 0);
@@ -75,7 +73,7 @@ void TaskReadDataSSFARM(void *pvParameters) {
     // moilvalue = 600;
     percentmoil = map(moilvalue, 0, 1023, 0, 100);
 
-    if (runEvery(70000, &previousMillis1)) {
+    if (runEvery(30000, &previousMillis1)) {
       xTaskCreatePinnedToCore(TaskSendDataFARM, "TaskSendDataFARM", 10000, NULL, 4, NULL, 1);
     }
 
@@ -129,17 +127,17 @@ void TaskREVControlFARM(void *pvParameters) {
         // Kiểm tra giá trị của Control
         if (*(int *)(controlpump.Control1) == 1) {
           // Bật LED
-          digitalWrite(RelayBom, LOW);
-          Serial.println("Current not Flowing");
-        } else if (*(int *)(controlpump.Control1) == 0) {
           digitalWrite(RelayBom, HIGH);
           Serial.println("Current Flowing");
-        } else if (*(int *)(controlpump.Control2) == 1) {
-          digitalWrite(RelayBom1, LOW);
+        } else if (*(int *)(controlpump.Control1) == 0) {
+          digitalWrite(RelayBom, LOW);
           Serial.println("Current not Flowing");
-        } else if (*(int *)(controlpump.Control2) == 0) {
+        } else if (*(int *)(controlpump.Control2) == 1) {
           digitalWrite(RelayBom1, HIGH);
           Serial.println("Current Flowing");
+        } else if (*(int *)(controlpump.Control2) == 0) {
+          digitalWrite(RelayBom1, LOW);
+          Serial.println("Current not Flowing");
         }
         // Close the response struct container
         rsc.close();

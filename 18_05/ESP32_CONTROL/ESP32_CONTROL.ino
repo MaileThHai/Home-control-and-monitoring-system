@@ -534,10 +534,9 @@ void TaskDataFirebase(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
     if (runEvery(15000, &previousMillis2)) {
-      int co21 = 99;
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Temperature", tLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Humidity", hLVR);
-      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/CO2", co21);
+      Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/CO2", CO2LVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/TVOC", TVOCLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Flame", FLMLVR);
       Firebase.setFloat(fbdo, "/DataSensor/LivingRoom/Smoke", SMKLVR);

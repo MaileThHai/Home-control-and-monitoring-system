@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title> WEB KLTN </title>
+		<link rel="stylesheet" href="web.css">
+
+</head>
+
+<body>
+	<div class="container1">
+		<div class="box1">
+			<img id="background" src="./image/background.png" alt="img" style="width: 100%; height: 100%">	
+				<h1 style="color: red; font-family: Times" class="name"> ĐỒ ÁN </h1>
+				<h1 style="color: yellow ; font-family: Times" class="name"> HỆ THỐNG GIÁM SÁT VÀ ĐIỀU KHIỂN </h1>
+				<a href="https://realtimeclock-weather-default-rtdb.firebaseio.com/" 
+				style="color: wheat" class="name"  target="_blank">Google Firebase</a>
+				<button class="loginButton" onclick="window.location.href='login.html'" style="float: right;">Logout</button>
+				
+		</div>
+	</div>
+		<div id="sidebar">
+			<ul>
+				<li><a href="./web.html">Home</a></li>
+				<li><a href="./node1.html">Node1</a></li>
+				<li><a href="./node2.html">Node2</a></li>
+				<li><a href="./node3.html">Node3</a></li>
+				<li><a href="login.html">Login</a></li>
+			</ul>
+		</div>
+<!-----------------------------------Overview-------------------------------------------------------------------->        
+	<div id="container2">
+		<div class="box1">
+			<div class="row1">
+					<div class = "column">
+						 <div class="node1"> 
+							<img id="node1_id" src="./image/nodes.png" alt="img" style="width: 60px">
+							<p>Node 01</p>
+							<div>
+								<button onclick="window.location.href='./node1.html'" id="node1_id">switch</button>
+								
+								<p style="color: brown; font-size: small;">Nhiệt độ: <span style="color :red" id="temp_node1" >None</span></p>
+								<p style="color: brown; font-size: small;">Độ ẩm: <span style="color :red" id="hum_node1" >None</span></p>
+								<p style="color: brown; font-size: small;">CO: <span style="color :red" id="co2_node1" >None</span></p>
+								<p style="color: brown; font-size: small;">TVCO: <span style="color :red" id="TVCO_node1" >None</span></p>
+								<p style="color: brown; font-size: small;">Relay1: <span style="color :red" id="relay1_node1" >None</span></p>
+								<p style="color: brown; font-size: small;">Relay2: <span style="color :red" id="relay2_node1" >None</span></p>
+							</div>
+						</div>	
+					</div>
+				<div class = "column">	
+					<div class="node2"> 
+						<img id="node2_id" src="./image/nodes.png" alt="img" style="width: 60px;">
+						<p>Node 02</p>
+						<div>
+							<button onclick="window.location.href='./node2.html'" id="node2_id">switch</button>
+							<p style="color: brown; font-size: small;">Nhiệt độ: <span style="color :red" id="temp_node2" >None</span></p>
+							<p style="color: brown; font-size: small;">Độ ẩm: <span style="color :red" id="hum_node2" >None</span></p>
+							<p style="color: brown; font-size: small;">CO: <span style="color :red" id="co2_node2" >None</span></p>
+							<p style="color: brown; font-size: small;">TVCO: <span style="color :red" id="TVCO_node2" >None</span></p>
+							<p style="color: brown; font-size: small;">Relay1: <span style="color :red" id="relay1_node2" >None</span></p>
+							<p style="color: brown; font-size: small;">Relay2: <span style="color :red" id="relay2_node2" >None</span></p>
+						</div>									
+					</div> 
+				</div>	
+				<div class = "column">	
+					 <div class="node3">
+						<img id="node3_id" src="./image/nodes.png" alt="img" style="width: 60px;">
+						<p>Node 03</p>
+						<div>
+							<button onclick="window.location.href='./node3.html'" id="node3_id">switch</button>
+							<p style="color: brown; font-size: small;">Nhiệt độ: <span style="color :red" id="temp_node3" >None</span></p>
+							<p style="color: brown; font-size: small;">Độ ẩm: <span style="color :red" id="hum_node3" >None</span></p>
+							<p style="color: brown; font-size: small;">Độ ẩm đất: <span style="color :red" id="humsoil_node3" >None</span></p>
+							<p style="color: brown; font-size: small;">Mưa: <span style="color :red" id="rain_node3" >None</span></p>
+							<p style="color: brown; font-size: small;">Relay1: <span style="color :red" id="relay1_node1" >None</span></p>
+							<p style="color: brown; font-size: small;">Relay2: <span style="color :red" id="relay2_node1" >None</span></p>
+						</div>									
+					</div> 
+				</div>
+			</div>
+		</div>
+	</div>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script src="node1.js"></script>
+  <script src="node2.js"></script>
+  <script src="node3.js"></script>
+  <script src="web.js"></script>
+</body>	
+
+</html>

@@ -145,7 +145,7 @@ void TaskReadDataSSLVR(void *pvParameters) {
       //     Serial.println(tvoc);
       //   }
       // }
-      co2 = 800;
+      co2 = 759;
       tvoc = 15;
 
       //FLAME//
@@ -205,7 +205,7 @@ void TaskReadDataSSLVR(void *pvParameters) {
 void TaskSendDataLVR(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    if (runEvery(50000, &previousMillis3)) {
+    if (runEvery(25000, &previousMillis3)) {
       ///SHT31////
       strcpy(datasensorLVR.type, "LVR");
       // Gửi dữ liệu nhiệt độ
@@ -315,7 +315,7 @@ void SendDataSheetTask(void *parameter) {
   for (;;) {
     if (runEvery(60000, &previousMillis1)) {
       while (xSemaphoreTake(TaskMutex, portMAX_DELAY) != pdTRUE)
-      //   ;
+        ;
       if (WiFi.status() == WL_CONNECTED) {
         // Create a URL for sending or writing data to Google Sheets.
         String Send_Data_URL = Web_App_URL + "?sts=write";

@@ -1,0 +1,115 @@
+*{
+    box-sizing: border-box;
+    /* margin: 5px; */
+}
+body{
+    background-image: url(image/container1.jpg);
+    display: flex;
+    flex-direction: column;
+    margin-left: 110px;
+}
+.container1{
+    background: darkcyan;
+    background-size:contain;
+    background-repeat: repeat;
+    /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+}
+.container2{
+
+    /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+
+}
+.container3{
+    background-size:contain;
+    background-repeat: repeat;
+    display: flex;
+    /*border: 1px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+    max-width: 400px;
+    max-height: 400px;
+}
+.box1{
+    
+    background-size:contain;
+    background-repeat: repeat;
+    border: 1px solid rgba(28, 111, 185, 0.813);
+    border-radius: 6px;
+    flex-grow: 1;
+    text-align: center;
+}
+.box3{
+    
+    background-size:contain;
+    background-repeat: repeat;
+    border: 1px solid rgba(28, 111, 185, 0.813);
+    border-radius: 6px;
+    flex-grow: 1;
+    text-align: center;
+    overlay: hidden;
+}
+.row1 {
+    display: flex;
+	flex-direction: row;
+    align-items: stretch;
+	justify-content: space-between;
+}
+.row1:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+.column1{
+    border: 1px solid #191919;
+    float: none;
+    flex: 1;
+    max-width: 400px;
+    max-height: 400px;
+    }
+.column2{
+    
+    float: none;
+    flex: 1;
+    max-width: 400px;
+    max-height: 400px;
+    justify-content: space-between
+}
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100px;
+    background-color: #333;
+    padding: 20px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    padding: 10px 0;
+}
+
+#sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: #f90;
+}
+.temp_node1_chart{
+    height: 60px;
+    width: 60px;
+}
+#temp_node1_chart{
+    max-width: 50%;
+    max-height: 50%;
+}
