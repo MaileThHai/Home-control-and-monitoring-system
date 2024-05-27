@@ -59,8 +59,11 @@ extern lv_obj_t * ui_windspeedweather1;
 extern lv_obj_t * ui_iconweather1;
 extern lv_obj_t * ui_iconweather2;
 extern lv_obj_t * ui_iconweather3;
+extern lv_obj_t * ui_PnDCN1;
 extern lv_obj_t * ui_Connect1;
+extern lv_obj_t * ui_PnDCN2;
 extern lv_obj_t * ui_Connect2;
+extern lv_obj_t * ui_PnDCN3;
 extern lv_obj_t * ui_Connect3;
 ///
 // SCREEN: ui_LoginScreen

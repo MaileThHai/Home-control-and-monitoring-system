@@ -58,12 +58,14 @@ struct SendWeather {
   byte maxhumday3[2];
   byte maxpresday3[2];
   byte maxwindday3[4];
+
+  byte checkcn[2];
 } sendweather;
 
-struct SendCheck {
-  char type[4] = "SCK";
-  byte checkcn[2];
-} sendcheck;
+// struct SendCheck {
+//   char type[4] = "SCK";
+//   byte checkcn[2];
+// } sendcheck;
 
 struct DataSensorFARM {
   byte temperatureF[4];
@@ -240,10 +242,10 @@ void setup() {
   taskmutex = xSemaphoreCreateMutex();
 
   xTaskCreatePinnedToCore(SendopenWeatherTask, "SendopenWeatherTask", 15000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(TaskREVData, "TaskREVData", 20000, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(TaskREVData, "TaskREVData", 17000, NULL, 4, NULL, 1);
   xTaskCreatePinnedToCore(SendConnectTask, "SendConnectTask", 8000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(TaskAlert, "TaskAlert", 4096, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(TaskDataFirebase, "TaskDataFirebase", 15000, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(TaskAlert, "TaskAlert", 8000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(TaskDataFirebase, "TaskDataFirebase", 10000, NULL, 1, NULL, 0);
 }
 
 void loop() {
@@ -253,8 +255,8 @@ void loop() {
 void TaskREVData(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
-      ;
+    // while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
+    //   ;
     if (e32ttl100.available() > 1) {
       char type[4];
       ResponseContainer rs = e32ttl100.receiveInitialMessage(sizeof(type));
@@ -332,7 +334,7 @@ void TaskREVData(void *pvParameters) {
       } else {
       }
     }
-    xSemaphoreGive(taskmutex);
+    // xSemaphoreGive(taskmutex);
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
@@ -670,16 +672,16 @@ void TaskAlert(void *pvParameters) {
 void SendConnectTask(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    if (runEvery(35000, &previousMillis8)) {
-      while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
-      ;
-      strcpy(sendcheck.type, "SCK");
-      *(uint16_t *)(sendcheck.checkcn) = 1;
-      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 1, 0xA, &sendcheck, sizeof(SendCheck));
+    // while (xSemaphoreTake(taskmutex, portMAX_DELAY) != pdTRUE)
+    //   ;
+    if (runEvery(60000, &previousMillis8)) {
+      strcpy(sendweather.type, "SWR");
+      *(uint16_t *)(sendweather.checkcn) = 1;
+      ResponseStatus rs = e32ttl100.sendFixedMessage(0, 1, 0xA, &sendweather, sizeof(SendWeather));
       Serial.println(rs.getResponseDescription());
-      vTaskDelay(500);
-      xSemaphoreGive(taskmutex);
+      vTaskDelay(350);
     }
-    vTaskDelay(350);
+    // xSemaphoreGive(taskmutex);
+    vTaskDelay(500);
   }
 }

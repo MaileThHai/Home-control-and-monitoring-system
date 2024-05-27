@@ -43,8 +43,11 @@ lv_obj_t * ui_windspeedweather1;
 lv_obj_t * ui_iconweather1;
 lv_obj_t * ui_iconweather2;
 lv_obj_t * ui_iconweather3;
+lv_obj_t * ui_PnDCN1;
 lv_obj_t * ui_Connect1;
+lv_obj_t * ui_PnDCN2;
 lv_obj_t * ui_Connect2;
+lv_obj_t * ui_PnDCN3;
 lv_obj_t * ui_Connect3;
 ///
 

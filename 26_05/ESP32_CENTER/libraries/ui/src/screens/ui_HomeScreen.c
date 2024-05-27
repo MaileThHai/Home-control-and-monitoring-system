@@ -315,38 +315,62 @@ void ui_HomeScreen_screen_init(void)
     lv_obj_add_flag(ui_iconweather3, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_iconweather3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     ////////////////////////////////////////////////////////
-    ui_Connect1 = lv_label_create(ui_HomeScreen);
+    ui_PnDCN1 = lv_obj_create(ui_HomeScreen);
+    lv_obj_set_width(ui_PnDCN1, 173);
+    lv_obj_set_height(ui_PnDCN1, 20);
+    lv_obj_set_x(ui_PnDCN1, 0);
+    lv_obj_set_y(ui_PnDCN1, 10);
+    lv_obj_set_align(ui_PnDCN1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PnDCN1, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_clear_flag(ui_PnDCN1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_PnDCN1, lv_color_hex(0xDAD4D4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PnDCN1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Connect1 = lv_label_create(ui_PnDCN1);
     lv_obj_set_width(ui_Connect1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Connect1, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Connect1, 0);
-    lv_obj_set_y(ui_Connect1, 13);
     lv_obj_set_align(ui_Connect1, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Connect1, "Sensor Disconnect");
-    lv_obj_add_flag(ui_Connect1, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_set_style_text_color(ui_Connect1, lv_color_hex(0xF90000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Connect1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Connect1, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Connect2 = lv_label_create(ui_HomeScreen);
+    ui_PnDCN2 = lv_obj_create(ui_HomeScreen);
+    lv_obj_set_width(ui_PnDCN2, 173);
+    lv_obj_set_height(ui_PnDCN2, 20);
+    lv_obj_set_x(ui_PnDCN2, 0);
+    lv_obj_set_y(ui_PnDCN2, 35);
+    lv_obj_set_align(ui_PnDCN2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PnDCN2, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_clear_flag(ui_PnDCN2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_PnDCN2, lv_color_hex(0xDAD4D4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PnDCN2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Connect2 = lv_label_create(ui_PnDCN2);
     lv_obj_set_width(ui_Connect2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Connect2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Connect2, 0);
-    lv_obj_set_y(ui_Connect2, 33);
     lv_obj_set_align(ui_Connect2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Connect2, "Control Disconnect");
-    lv_obj_add_flag(ui_Connect2, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_set_style_text_color(ui_Connect2, lv_color_hex(0xF90000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Connect2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Connect2, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Connect3 = lv_label_create(ui_HomeScreen);
+    ui_PnDCN3 = lv_obj_create(ui_HomeScreen);
+    lv_obj_set_width(ui_PnDCN3, 173);
+    lv_obj_set_height(ui_PnDCN3, 20);
+    lv_obj_set_x(ui_PnDCN3, 0);
+    lv_obj_set_y(ui_PnDCN3, 60);
+    lv_obj_set_align(ui_PnDCN3, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PnDCN3, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_clear_flag(ui_PnDCN3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_PnDCN3, lv_color_hex(0xDAD4D4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PnDCN3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Connect3 = lv_label_create(ui_PnDCN3);
     lv_obj_set_width(ui_Connect3, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Connect3, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Connect3, 0);
-    lv_obj_set_y(ui_Connect3, 53);
     lv_obj_set_align(ui_Connect3, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Connect3, "Farm Disconnect");
-    lv_obj_add_flag(ui_Connect3, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_set_style_text_color(ui_Connect3, lv_color_hex(0xF90000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Connect3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Connect3, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);

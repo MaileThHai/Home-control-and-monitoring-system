@@ -1,59 +1,46 @@
-// ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2017
+// ArduinoJson - https://arduinojson.org
+// Copyright © 2014-2024, Benoit BLANCHON
 // MIT License
 //
 // This example shows how to deserialize a JSON document with ArduinoJson.
+//
+// https://arduinojson.org/v7/example/parser/
 
 #include <ArduinoJson.h>
 
 void setup() {
   // Initialize serial port
   Serial.begin(9600);
-  while (!Serial) continue;
+  while (!Serial)
+    continue;
 
-  // Memory pool for JSON object tree.
-  //
-  // Inside the brackets, 200 is the size of the pool in bytes.
-  // Don't forget to change this value to match your JSON document.
-  // Use arduinojson.org/assistant to compute the capacity.
-  StaticJsonBuffer<200> jsonBuffer;
-
-  // StaticJsonBuffer allocates memory on the stack, it can be
-  // replaced by DynamicJsonBuffer which allocates in the heap.
-  //
-  // DynamicJsonBuffer  jsonBuffer(200);
+  // Allocate the JSON document
+  JsonDocument doc;
 
   // JSON input string.
-  //
-  // It's better to use a char[] as shown here.
-  // If you use a const char* or a String, ArduinoJson will
-  // have to make a copy of the input in the JsonBuffer.
-  char json[] =
+  const char* json =
       "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
 
-  // Root of the object tree.
-  //
-  // It's a reference to the JsonObject, the actual bytes are inside the
-  // JsonBuffer with all the other nodes of the object tree.
-  // Memory is freed when jsonBuffer goes out of scope.
-  JsonObject& root = jsonBuffer.parseObject(json);
+  // Deserialize the JSON document
+  DeserializationError error = deserializeJson(doc, json);
 
-  // Test if parsing succeeds.
-  if (!root.success()) {
-    Serial.println("parseObject() failed");
+  // Test if parsing succeeds
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
     return;
   }
 
-  // Fetch values.
+  // Fetch the values
   //
   // Most of the time, you can rely on the implicit casts.
-  // In other case, you can do root["time"].as<long>();
-  const char* sensor = root["sensor"];
-  long time = root["time"];
-  double latitude = root["data"][0];
-  double longitude = root["data"][1];
+  // In other case, you can do doc["time"].as<long>();
+  const char* sensor = doc["sensor"];
+  long time = doc["time"];
+  double latitude = doc["data"][0];
+  double longitude = doc["data"][1];
 
-  // Print values.
+  // Print the values
   Serial.println(sensor);
   Serial.println(time);
   Serial.println(latitude, 6);
@@ -67,12 +54,12 @@ void loop() {
 // See also
 // --------
 //
-// The website arduinojson.org contains the documentation for all the functions
+// https://arduinojson.org/ contains the documentation for all the functions
 // used above. It also includes an FAQ that will help you solve any
 // deserialization problem.
-// Please check it out at: https://arduinojson.org/
 //
 // The book "Mastering ArduinoJson" contains a tutorial on deserialization.
 // It begins with a simple example, like the one above, and then adds more
 // features like deserializing directly from a file or an HTTP request.
-// Please check it out at: https://leanpub.com/arduinojson/
+// Learn more at https://arduinojson.org/book/
+// Use the coupon code TWENTY for a 20% discount ❤❤❤❤❤

@@ -94,6 +94,7 @@ void setup() {
     Serial.println("Couldn't find SHT31");
     while (1) delay(1);
   }
+  delay(5000);
   // if (!ccs.begin()) {
   //   Serial.println("Failed to start sensor! Please check your wiring.");
   //   while (1)

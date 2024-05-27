@@ -85,7 +85,7 @@ int stoptimer = 0;
 unsigned long lastLVRTime = 0;
 unsigned long lastFRMTime = 0;
 unsigned long lastSWRTime = 0;
-const unsigned long TIMEOUT = 60000;  // 1 phút
+const unsigned long TIMEOUT = 120000;  // 1 phút
 int checkconnect1 = 0;
 int checkconnect2 = 0;
 int checkconnect3 = 0;
@@ -159,6 +159,8 @@ struct SendWeather {
   byte maxhumday3[2];
   byte maxpresday3[2];
   byte maxwindday3[4];
+
+  byte checkcn[2];
 } sendweather;
 float wtempmin1, wtempmax1, wtempmin2, wtempmax2, wtempmin3, wtempmax3, wwind1, wwind2, wwind3, wtempmin1C, wtempmin2C, wtempmin3C, wtempmax1C, wtempmax2C, wtempmax3C;
 uint16_t whum1 = 0;
@@ -169,9 +171,9 @@ uint16_t whum3 = 0;
 uint16_t wpres3 = 0;
 uint16_t checkcnn = 0;
 
-struct SendCheck {
-  byte checkcn[2];
-} sendcheck;
+// struct SendCheck {
+//   byte checkcn[2];
+// } sendcheck;
 
 /* ====================
  * Struct Send Password 
@@ -516,6 +518,7 @@ void REVDataSensor_task(void *pvParameters) {
       }
 
       if (typeStr == "SWR") {
+        lastSWRTime = currentTime;  // Cập nhật thời gian cuối nhận dữ liệu từ SWR
         ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(SendWeather));
         struct SendWeather sendweather = *(SendWeather *)rsc.data;
 
@@ -563,18 +566,21 @@ void REVDataSensor_task(void *pvParameters) {
         wpres3 = *(uint16_t *)(sendweather.maxpresday3);
         Serial.println(*(float *)(sendweather.maxwindday3));
         wwind3 = *(float *)(sendweather.maxwindday3);
-        // Close the response struct container
-        rsc.close();
-      }
-      if (typeStr == "SCK") {
-        lastSWRTime = currentTime;  // Cập nhật thời gian cuối nhận dữ liệu từ SWR
-        ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(SendCheck));
-        struct SendCheck sendcheck = *(SendCheck *)rsc.data;
-        Serial.println(*(uint16_t *)(sendcheck.checkcn));
+        Serial.println(*(uint16_t *)(sendweather.checkcn));
         // Close the response struct container
         rsc.close();
         checkconnect3 = 0;
-      } else {
+      }
+      // if (typeStr == "SCK") {
+      //   lastSWRTime = currentTime;  // Cập nhật thời gian cuối nhận dữ liệu từ SWR
+      //   ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(SendCheck));
+      //   struct SendCheck sendcheck = *(SendCheck *)rsc.data;
+      //   Serial.println(*(uint16_t *)(sendcheck.checkcn));
+      //   // Close the response struct container
+      //   rsc.close();
+      // checkconnect3 = 0;
+      // } 
+      else {
         // Serial.println("Something goes wrong!!");
       }
     }
@@ -630,19 +636,19 @@ void DisplaySensor_task(void *pvParameters) {
     }
 
     if (checkconnect1 == 0) {
-      _ui_flag_modify(ui_Connect1, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+      _ui_flag_modify(ui_PnDCN1, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
     } else if (checkconnect1 == 1) {
-      _ui_flag_modify(ui_Connect1, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+      _ui_flag_modify(ui_PnDCN1, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
     }
     if (checkconnect2 == 0) {
-      _ui_flag_modify(ui_Connect3, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+      _ui_flag_modify(ui_PnDCN3, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
     } else if (checkconnect2 == 1) {
-      _ui_flag_modify(ui_Connect3, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+      _ui_flag_modify(ui_PnDCN3, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
     }
     if (checkconnect3 == 0) {
-      _ui_flag_modify(ui_Connect2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+      _ui_flag_modify(ui_PnDCN2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
     } else if (checkconnect3 == 1) {
-      _ui_flag_modify(ui_Connect2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+      _ui_flag_modify(ui_PnDCN2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
     }
 
 
@@ -810,7 +816,7 @@ void TimerAuto_task(void *pvParameters) {
       stoptimer = 0;
     }
     ////Turn off Timer in day if Rain//////
-    if (RAINFRM == 0) {
+    if ((RAINFRM == 0) && (checkconnect2 == 0)) {
       if (startTime == 0) {    // Kiểm tra nếu chưa bắt đầu đếm
         startTime = millis();  // Gán thời gian bắt đầu đếm
         Serial.println("Cảm biến phát hiện nước");
