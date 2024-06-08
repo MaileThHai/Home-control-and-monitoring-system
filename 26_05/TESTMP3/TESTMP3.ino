@@ -6,7 +6,7 @@
 DFRobotDFPlayerMini myDFPlayer;
 
 void setup() {
-  FPSerial.begin(9600, SERIAL_8N1, 27, 26);
+  FPSerial.begin(9600, SERIAL_8N1, 26, 27);
 
   Serial.begin(115200);
 

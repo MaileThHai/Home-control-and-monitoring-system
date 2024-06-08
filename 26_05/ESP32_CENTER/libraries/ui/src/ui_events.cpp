@@ -256,6 +256,7 @@ void SaveTimeTimer(lv_event_t * e)
 		Control = false;
 		Period = true;
 		Serial.println("TIMEON");
+		lv_obj_set_style_bg_color(ui_BtnTimerFarm, lv_color_hex(0x930707), LV_PART_MAIN | LV_STATE_DEFAULT);
 	}
 	
 	if ((Timer == true) && (TimerPump == 1)){
@@ -297,11 +298,13 @@ void SaveTimeTimer(lv_event_t * e)
 		preferences.end();
 		Serial.println("Period");
 		CheckTimeSVPumpAdd = true;
+//		Control = true;
 		}
 	if (count >= 2){
 		Timer = false;
 		Control = true;
 		Serial.println("TIMEOFF");
+		lv_obj_set_style_bg_color(ui_BtnTimerFarm, lv_color_hex(0x5A5A5A), LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_clear_state(ui_SwitchDevice1FARM, LV_STATE_CHECKED);
 		count = 0;
 	}

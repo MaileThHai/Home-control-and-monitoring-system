@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> WEB KLTN </title>
+	
+	<link rel="stylesheet" href="index.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+  	<link rel="manifest" href="./site.webmanifest">
+</head>
+
+<body>
+	<div class="container1">
+		<button class="loginButton" onclick="window.location.href='login.html'"> <span >Logout</span></button>		
+		<h1 style="color: red" class="name"> ĐỒ ÁN </h1>
+		<h1 style="color: yellow" class="name"> HỆ THỐNG GIÁM SÁT VÀ ĐIỀU KHIỂN </h1>
+				<!--<a href="https://kltn-bd6e3-default-rtdb.asia-southeast1.firebasedatabase.app" 
+				style="color: wheat" class="name"  target="_blank">Google Firebase</a>
+				-->
+		<div class="flex-container">
+			<div id="date" class="date"></div>
+			<div id="time" class="time" ></div>
+		</div>
+	</div>
+		  <script>
+			// Get the current date and time
+			var currentDate = new Date();
+			
+			// Format the date
+			var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+			var formattedDate = currentDate.toLocaleDateString('en-US', dateOptions);
+			
+			// Format the time
+			var timeOptions = { hour: 'numeric', minute: 'numeric' };
+			var formattedTime = currentDate.toLocaleTimeString('en-US', timeOptions);
+			
+			// Display the date and time
+			document.getElementById('date').textContent = formattedDate;
+			document.getElementById('time').textContent = formattedTime;
+		  </script>
+</div>
+		<div id="sidebar" class ="sidebar">
+			<ul>
+				<li>
+					<div class="flex-container">
+						<img id="home_img" class ="sidebar_img" src="./image/home.png" alt="img" style="width: 20px; margin-top: 5px;">
+						<a href="./index.html"><span class ="sidebar_text"> Home </span></a>
+					</div>
+				</li>
+
+				<li>
+					<div class="flex-container">
+						<img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img">
+						<a href="./node1.html"><span class ="sidebar_text"> Node1 </span></a>
+					</div>
+				</li>
+				<li>
+					<div class="flex-container">
+						<img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img" style="width: 20px; margin-top: 5px;">
+						<a href="./node2.html"><span class ="sidebar_text"> Node2 </span></a>
+					</div>
+				</li>
+				<li>
+					<div class="flex-container">
+						<img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img" style="width: 20px; margin-top: 5px;">
+						<a href="./node3.html"><span class ="sidebar_text"> Node3</span></a>
+					</div>
+				</li>
+				<li>
+					<div class="flex-container">
+						<img id="login_img" class ="sidebar_img" src="./image/login.png" alt="img" style="width: 20px; margin-top: 5px;">
+						<a href="./login.html"><span class ="sidebar_text"> Logout </span></a>
+					</div>
+				</li>
+			</ul>
+		</div>
+<!-----------------------------------Overview-------------------------------------------------------------------->        
+	<div id="container2">
+		<div class="box1">
+			<div class="row1">
+					<div class = "column">
+						 <div class="node1"> 
+							<div class="header">
+								<img id="node1_id" class="node_img" src="./image/nodes.png" alt="img" style="width: 60px ">
+								<p class ="node_name">NODE 1</p>
+							</div>
+							<div>
+								<button class ="switch" onclick="window.location.href='./node1.html'" id="node1_id">Detail</button>
+							</div>
+							<div class = "flex-container">
+								<img id="temp1" class ="mini_img" src="./image/tempon.png" alt="img" style="width: 20px; margin-top: 5px;">
+								<p class ="sensor"> Nhiệt độ: <span class="data"  id="temp_node1" >None</span></p>
+							</div>	
+							<div class = "flex-container">
+								<img id="hum1" class ="mini_img" src="./image/humon.png" alt="img" style="width: 20px; margin-top: 5px;">
+								<p class ="sensor"> Độ ẩm: <span class="data" id="hum_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="co1" class ="mini_img" src="./image/co2.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> CO: <span class="data" id="co2_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="tvco1" class ="mini_img" src="./image/TVCO.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> TVCO: <span class="data" id="tvco_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="fire1" class ="mini_img" src="./image/fire.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Fire: <span class="data" id="fire_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="smoke1" class ="mini_img" src="./image/smoke.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Khói: <span class="data" id="smoke_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="img_relay1_node1" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Relay1: <span class="data" id="relay1_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="img_relay2_node1" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Relay2: <span class="data" id="relay2_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="img_relay3_node1" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Relay3: <span class="data" id="relay3_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="img_relay4_node1" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Relay4: <span class="data" id="relay4_node1" >None</span></p>
+							</div>
+							<div class = "flex-container">
+								<img id="speaker1" class ="mini_img" src="./image/speaker_on.png" alt="img" style="width: 20px; margin-top: 5px;">	
+								<p class ="sensor"> Loa: <span class="data" id="speaker_node1" >None</span></p>
+							</div>	
+						</div>
+					</div>	
+					
+				<div class = "column">	
+					<div class="node2"> 
+						<div class="header">
+							<img id="node2_id" class="node_img" src="./image/nodes.png" alt="img" style="width: 60px;">
+							<p class ="node_name">NODE 2</p>
+						</div>
+						<div>
+							<button class ="switch" onclick="window.location.href='./node2.html'" id="node2_id">Detail</button>
+						</div>
+						<div class = "flex-container">
+							<img id="temp2" class ="mini_img" src="./image/tempon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Nhiệt độ: <span class="data" id="temp_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="hum2" class ="mini_img" src="./image/humon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Độ ẩm: <span class="data" id="hum_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="co2" class ="mini_img" src="./image/co2.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">CO: <span class="data" id="co2_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="tvco2" class ="mini_img" src="./image/TVCO.png" alt="img" style="width: 20px; margin-top: 5px;">
+							<p class ="sensor">TVCO: <span class="data" id="tvco_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="fire2" class ="mini_img" src="./image/fire.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Fire: <span class="data" id="fire_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="smoke2" class ="mini_img" src="./image/smoke.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor"> Khói: <span class="data" id="smoke_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="img_relay1_node2" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Relay1: <span class="data" id="relay1_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="img_relay2_node2" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Relay2: <span class="data" id="relay2_node2" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="img_relay3_node2" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor"> Relay3: <span class="data" id="relay3_node2" >None</span></p>
+						</div>	
+						<div class = "flex-container">
+							<img id="img_relay4_node2" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor"> Relay4: <span class="data" id="relay4_node2" >None</span></p>
+						</div>
+					</div>									
+				</div> 
+					
+				<div class = "column">	
+					 <div class="node3">
+						<div class = "header">
+						<img id="node3_id" class ="node_img" src="./image/nodes.png" alt="img" style="width: 60px;">
+						<p class ="node_name">NODE 3</p>
+						</div>
+						<div>
+							<button class ="switch" onclick="window.location.href='./node3.html'" id="node3_id">Detail</button>
+						</div>
+						<div class = "flex-container">
+							<img id="temp3" class ="mini_img" src="./image/tempon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Nhiệt độ: <span class="data" id="temp_node3" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="hum3" class ="mini_img" src="./image/humon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Độ ẩm: <span class="data" id="hum_node3" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="humsoil3" class ="mini_img" src="./image/ground.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class ="sensor">Độ ẩm đất: <span class="data" id="humsoil_node3" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="rain3" class ="mini_img" src="./image/rain.png" alt="img" style="width: 20px; margin-top: 5px;">
+							<p class ="sensor">Mưa: <span class="data" id="rain_node3" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="img_relay1_node3" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class="sensor">Relay1: <span class="data" id="relay1_node3" >None</span></p>
+						</div>
+						<div class = "flex-container">
+							<img id="img_relay2_node3" class ="mini_img" src="./image/relayon.png" alt="img" style="width: 20px; margin-top: 5px;">	
+							<p class="sensor">Relay2: <span class="data" id="relay2_node3" >None</span></p>
+						</div>
+					</div>									
+				</div> 
+			</div>
+		</div>
+	</div>
+	
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script src="index.js"></script> 
+  <script src="node1.js"></script>
+  <script src="node2.js"></script>
+  <script src="node3.js"></script>
+  
+</body>	
+
+</html>

@@ -1,0 +1,202 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+.time-container{
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  font-style: italic;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(4, 6, 104);
+}
+.login-container{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* background-image: linear-gradient(rgba(0,0,50,0.8),rgba(0,0,50,0.8)), url(https://scontent.fsgn2-4.fna.fbcdn.net/v/t39.30808-6/362260406_1344773996387508_9026904267356960810_n.jpg?_nc_cat=101&cb=99be929b-59f725be&ccb=1-7&_nc_sid=730e14&_nc_ohc=I8AmDkS2KxIAX_iQsec&_nc_ht=scontent.fsgn2-4.fna&oh=00_AfDYlrqh7sqHoj6OX4qg2dIYLBolYDKEzGdMvAP_G3Lb7Q&oe=64BE1004); */
+    background-image: url(image/container1.jpg);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+.logo{
+  width: 80px;
+  height: 80px;
+  border-radius: 1px;
+  background-size: auto;
+  align-content: center;
+}
+.container1{
+  background: darkcyan;
+  background-size:contain;
+  background-repeat: repeat;
+  /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+  text-align: center;
+  border-radius: 20px;
+
+}
+.name {
+  font-family: 'Rubik', sans-serif;
+  font-size: 1rem;
+  text-shadow: 3px 3px 5px rgb(40, 16, 128);
+}
+.container2{
+  /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+  text-align: center;
+
+}
+.form-box{
+    width: 90%;
+    max-width: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 50px 60px 70px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.form-box h1{
+    font-size: 30px;
+    margin-bottom: 60px;
+    color: #3c00a0;
+    position: relative;
+} 
+
+.form-box h1::after{
+    content: '';
+    width: 30px;
+    height: 4px;
+    border-radius: 3px;
+    background: #3c00a0;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.input-field{
+    background: #eaeaea;
+    margin: 15px 0;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+}
+input{
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    padding: 10px 15px;
+}
+.input-field i{
+    margin-left: 15px;
+    color: #999;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: left 0.3s;
+}
+
+button:hover::before {
+  left: 0;
+}
+
+button::after {
+  content: "Login";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+button:hover::after {
+  opacity: 1;
+}
+
+button:active {
+  transform: scale(0.95);
+  background-color: #408e40;
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.myBtn{
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+}

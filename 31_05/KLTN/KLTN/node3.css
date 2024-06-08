@@ -1,0 +1,231 @@
+*{
+    box-sizing: border-box;
+    /* margin: 5px; */
+}
+body{
+    background-image: url(image/container1.jpg);
+    display: flex;
+    flex-direction: column;
+    margin-left: 110px;
+}
+.container1{
+    background: darkcyan;
+    background-size:contain;
+    background-repeat: repeat;
+    /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+}
+.name {
+    font-family: 'Rubik', sans-serif;
+	margin-bottom: 10px;
+	font-size: 25px;
+	text-shadow: 3px 3px 5px rgb(16, 128, 38);
+    
+}
+.node_name{
+    font-family: 'Rubik', sans-serif;
+    font-size: 20px;
+    color: #f71b3f;
+    text-align: center;
+}
+.date{
+    color: rgb(4, 6, 104);
+    font-family: 'Rubik', sans-serif;
+    margin-bottom: 10px;
+    font-size: 25px;
+    
+}
+.data{
+    color: #037435;
+    font-family: 'Rubik', sans-serif;
+}
+.sensor{
+    color: #f71b3f;
+    font-family: 'Rubik', sans-serif;
+    font-size: small;
+}
+.boxdata {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+}
+.gap{
+    height: 5px;
+    width: flex;
+    flex-direction: row;
+}
+.container2{
+
+    /*border: 3px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+
+}
+.container3{
+    background-size:contain;
+    background-repeat: repeat;
+    display: flex;
+    /*border: 1px solid rgba(28, 111, 185, 0.813);*/
+    text-align: center;
+    max-width: 400px;
+    max-height: 400px;
+}
+.box1{
+    
+    background-size:contain;
+    background-repeat: repeat;
+    border: 1px solid rgba(28, 111, 185, 0.813);
+    border-radius: 6px;
+    flex-grow: 1;
+    text-align: center;
+}
+.box3{
+    
+    background-size:contain;
+    background-repeat: repeat;
+    border: 1px solid rgba(28, 111, 185, 0.813);
+    border-radius: 6px;
+    flex-grow: 1;
+    text-align: center;
+    overlay: hidden;
+}
+.row1 {
+    display: flex;
+	flex-direction: row;
+    align-items: stretch;
+	justify-content: space-between;
+}
+.row1:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+.column1{
+    border: 1px solid #191919;
+    float: none;
+    flex: 1;
+    max-width: 400px;
+    max-height: 400px;
+    }
+.column2{
+    
+    float: none;
+    flex: 1;
+    max-width: 400px;
+    max-height: 400px;
+}
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100px;
+    background-color: #333;
+    padding: 20px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    padding: 10px 0;
+}
+
+#sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: #f90;
+}
+.temp_node1_chart{
+    height: 60px;
+    width: 60px;
+}
+#temp_node1_chart{
+    max-width: 50%;
+    max-height: 50%;
+}
+.loginButton {
+    background-color: #8df878;
+    border: 2px solid #4323d4;
+    border-radius: 12px;
+    color: black;
+    font-family: 'Rubik', sans-serif;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    top: 0;
+    right: 0;
+    position: absolute;  
+}
+.loginButton:hover {
+    background-color: #08ac39;
+    color: white;
+}
+.btn {
+    align-items: center;
+    background-color: #fee6e3;
+    border: 2px solid #111;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    font-family: 'Rubik',sans-serif;
+    font-size: 16px;
+    justify-content: center;
+    line-height: 24px;
+    max-width: 100%;
+    padding: 4 4px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+} 
+.btn:after {
+    background-color: #111;
+    border-radius: 8px;
+    content: "";
+    color: white;
+    display: block;
+    height: 26px;
+    left: 0;
+    width: 100%;
+    position: absolute;
+    top: -2px;
+    transform: translate(8px, 8px);
+    transition: transform .2s ease-out;
+    z-index: -1;
+} 
+.btn:hover:after {
+    transform: translate(0, 0);
+    color: white;
+}
+.btn:active {
+    background-color: #ffdeda;
+    outline: 0;
+    color: white;
+}
+.btn:hover {
+    outline: 0;
+    color: white;
+}
+@media (min-width: 768px) {
+    .btn {
+      padding: 4 4px;
+    }
+}

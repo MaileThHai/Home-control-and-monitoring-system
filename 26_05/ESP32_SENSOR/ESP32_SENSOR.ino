@@ -11,8 +11,8 @@
 
 String Web_App_URL = "https://script.google.com/macros/s/AKfycbw03K3sj-Mc9EMVFMTxFLtdgOBjXnlEUAYZAf_7jK9s2POrI8B9wznknU6m9sdXwjKE/exec";
 SemaphoreHandle_t TaskMutex;
-#define WIFI_SSID "HUY QUANG"
-#define WIFI_PASSWORD "khongbiet"
+#define WIFI_SSID "iPhone 11"
+#define WIFI_PASSWORD "1234567800"
 
 // Initialize Telegram BOT
 String BOTtoken = "6483101599:AAEceP-UHR8ne3owkRkMmjfB9BPPvPPNybQ";  // your Bot Token (Get from Botfather)
@@ -94,15 +94,16 @@ void setup() {
     Serial.println("Couldn't find SHT31");
     while (1) delay(1);
   }
-  delay(5000);
-  // if (!ccs.begin()) {
-  //   Serial.println("Failed to start sensor! Please check your wiring.");
-  //   while (1)
-  //     ;
-  // }
+
+  if (!ccs.begin()) {
+    Serial.println("Failed to start sensor! Please check your wiring.");
+    while (1)
+      ;
+  }
   // Wait for the sensor to be ready6
-  // while (!ccs.available())
-  //   ;
+  while (!ccs.available())
+    ;
+  delay(5000);
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connect Wi-Fi");
@@ -130,27 +131,30 @@ void loop() {
 void TaskReadDataSSLVR(void *pvParameters) {
   (void)pvParameters;
   for (;;) {
-    if (runEvery(10000, &previousMillis2)) {
+    if (runEvery(2000, &previousMillis2)) {
       //SHT31//
       t = sht31.readTemperature();
       h = sht31.readHumidity();
+      Serial.println(t);
+      Serial.println(h);
       //CCS811//
 
-      // if (ccs.available()) {
-      //   if (!ccs.readData()) {
-      //     co2 = ccs.geteCO2();
-      //     tvoc = ccs.getTVOC();
-      //     Serial.print("CO2: ");
-      //     Serial.print(co2);
-      //     Serial.print("ppm, TVOC: ");
-      //     Serial.println(tvoc);
-      //   }
-      // }
-      co2 = 759;
-      tvoc = 15;
+      if (ccs.available()) {
+        if (!ccs.readData()) {
+          co2 = ccs.geteCO2();
+          tvoc = ccs.getTVOC();
+          Serial.print("CO2: ");
+          Serial.print(co2);
+          Serial.print("ppm, TVOC: ");
+          Serial.println(tvoc);
+        }
+      }
+      // co2 = 759;
+      // tvoc = 15;
 
       //FLAME//
       sensorValue = analogRead(Fire_GPIO);
+      Serial.println(sensorValue);
       //SMOKE//
       MP4Value = analogRead(MP4_GPIO);
       Serial.println(MP4Value);

@@ -1,0 +1,6 @@
+control không gửi đi không nhận về check lại dây
+
+tím vcc
+vàng gnd
+xanh lá scl 22
+xanh nước sda 21

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title> WEB KLTN </title>
+		<link rel="stylesheet" href="node1.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+	    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  	    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  	    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+  	    <link rel="manifest" href="./site.webmanifest">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+        </script>
+</head>
+<body>
+    <div class="container1">
+        <button class="loginButton" onclick="window.location.href='login.html'">Logout</button>            
+        <h1 style="color: red" class="name"> ĐỒ ÁN </h1>
+        <h1 style="color: yellow" class="name"> HỆ THỐNG GIÁM SÁT VÀ ĐIỀU KHIỂN </h1>
+        <div class="flex-container">
+            <div id="date" class="date"></div>
+            <div id="time" class ="time"></div>
+        </div>
+    </div>
+              <script>
+                // Get the current date and time
+                var currentDate = new Date();
+                
+                // Format the date
+                var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                var formattedDate = currentDate.toLocaleDateString('en-US', dateOptions);
+                
+                // Format the time
+                var timeOptions = { hour: 'numeric', minute: 'numeric' };
+                var formattedTime = currentDate.toLocaleTimeString('en-US', timeOptions);
+                
+                // Display the date and time
+                document.getElementById('date').textContent = formattedDate;
+                document.getElementById('time').textContent = formattedTime;
+              </script>
+        <div id="sidebar" class="sidebar">
+            <ul>
+                <li>
+                    <div class="flex-container">
+                        <img id="home_img" class ="sidebar_img" src="./image/home.png" alt="img" style="width: 20px; margin-top: 5px;">
+                        <a href="./index.html" ><span class ="sidebar_text"> Home </span></a>
+                    </div>
+                </li>
+    
+                <li>
+                    <div class="flex-container">
+                        <img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img" style="width: 20px; margin-top: 5px;">
+                        <a href="./node1.html"><span class ="sidebar_text"> Node1 </span></a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex-container">
+                        <img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img" style="width: 20px; margin-top: 5px;">
+                        <a href="./node2.html"><span class ="sidebar_text"> Node2</span></a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex-container">
+                        <img id="nodes_img" class ="sidebar_img" src="./image/nodes.png" alt="img" style="width: 20px; margin-top: 5px;">
+                        <a href="./node3.html"><span class ="sidebar_text"> Node3 </span></a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex-container">
+                        <img id="login_img" class ="sidebar_img" src="./image/login.png" alt="img" style="width: 20px; margin-top: 5px;">
+                        <a href="./login.html"> <span class ="sidebar_text"> Logout </span></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+<!-----------------------------------Node1-------------------------------------------------------------------->   
+<div class="container2">
+    <div class="box2">
+        <p class="node_name"> NODE 2 </p>
+    </div>
+</div>
+<div class = "container3">
+    <div class="grid-container">
+        
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="temp_node2_id" src="./image/tempon.png" alt="img" class="data_img">
+                    <p class="sensor">Nhiệt độ: <span class="data" id="temp_node2">None</span></p>  
+                    <canvas id="temp_node2_Chart" class ="temp_node2_chart" class ="chart"></canvas>  
+                </div>
+                
+            </div>
+            
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="hum_node2_id" src="./image/humon.png" alt="img" class ="data_img">
+                    <p class="sensor">Độ ẩm: <span class="data" id="hum_node2">None</span></p> 
+                    <canvas id="hum_node2_Chart" class ="hum_node2_chart" class ="chart"></canvas>  
+                </div>
+                
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="CO_node2_id" src="./image/co2.png" alt="img" class ="data_img">
+                    <p class="sensor">CO2: <span class="data" id="co2_node2">None</span></p>
+                    <canvas id="co2_node2_Chart" class ="co2_node2_chart" class ="chart"></canvas>
+                </div>
+                
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="tvco_node2_id" src="./image/TVCO.png" alt="img" class="data_img">
+                    <p class="sensor">TVCO: <span class="data" id="tvco_node2">None</span></p>
+                    <canvas id="tvco_node2_Chart" class ="tvco_node2_chart" class ="chart"></canvas>
+                </div>
+                
+            </div>
+        
+    </div>
+</div>
+
+<div class = "gap">
+    <div class = "row2">
+        <h1 style="color: rgba(28, 111, 185, 0.813); font-size: 30px; text-align: center; font-family: Arial, Helvetica, sans-serif;"></h1>
+    </div>
+</div>
+
+<div class ="container4">
+    <div class ="grid-container">
+        
+            <div class = "grid-item">
+                <div class="boxdata">
+                    <img id="relay1_node2_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                    <p class="sensor">Relay 1: <span class="data" id="relay1_node2">None</span></p>
+                    <button class="btn" id="relay1_node2_on" >ON</button>
+                    <button class="btn" id="relay1_node2_off" >OFF</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="relay2_node2_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                    <p class="sensor">Relay 2: <span class="data" id="relay2_node2">None</span></p>
+                    <button class="btn" id="relay2_node2_on" >ON</button>
+                    <button class="btn" id="relay2_node2_off" >OFF</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="relay3_node2_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                    <p class="sensor">Relay 2: <span class="data" id="relay3_node2">None</span></p>
+                    <button class="btn" id="relay3_node2_on" >ON</button>
+                    <button class="btn" id="relay3_node2_off" >OFF</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="relay4_node2_id" src="./image/relayon.png" alt="img" style="width: 60px;">
+                    <p class="sensor">Relay 2: <span class="data" id="relay4_node2">None</span></p>
+                    <button class="btn" id="relay4_node2_on" >ON</button>
+                    <button class="btn" id="relay4_node2_off" >OFF</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="firesensor_node1_id" src="./image/fire.png" alt="img" style="width: 60px;">
+                    <p class="sensor">Fire: <span class="data" id="fire_node2">None</span></p>
+                </div>
+            </div>
+            <div class="grid-item">
+                <div class="boxdata">
+                    <img id="smoke_node2_id" src="./image/smoke.png" alt="img" class="data_img">
+                    <p class="sensor">Khói: <span class="data" id="smoke_node2">None</span></p>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+
+<script>
+    // random nhiệt độ
+/*const temperatureData = [];
+for (let i = 0; i < 10; i++) {
+    temperatureData.push(Math.floor(Math.random() * 100));
+}
+const humidityData = Array.from({length: 10}, () => Math.floor(Math.random() * 100));
+const co2Data = Array.from({length: 10}, () => Math.floor(Math.random() * 1000));*/
+// Update the temp_node1 span
+const humidityChartCanvas = document.getElementById('hum_node2_Chart').getContext('2d');
+const co2ChartCanvas = document.getElementById('co2_node2_Chart').getContext('2d');
+const temperatureChartCanvas = document.getElementById('temp_node2_Chart').getContext('2d');
+const TVCOChartCanvas = document.getElementById('tvco_node2_Chart').getContext('2d');
+// Generate random time labels
+const timeLabels = [];
+for (let i = 0; i < 10; i++) {
+    let now = new Date();
+    let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    timeLabels.push(time);
+}
+
+
+// Create the line chart
+new Chart(temperatureChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'Temperature',
+            data: temp_node2,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+new Chart(humidityChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'Humidity',
+            data: hum_node2,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+
+new Chart(co2ChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'CO2',
+            data: co2_node2,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+new Chart(TVCOChartCanvas, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [{
+            label: 'CO2',
+            data: tvco_node2,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 10 // adjust this value to change the font size
+                    }
+                }
+            }
+        }
+    }
+});
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+<script src="node2.js"></script>
+<script src="index.js"></script>
+
+
+</body>
+
+</html>
