@@ -1,5 +1,5 @@
 # Home control and monitoring system
-**The system include a set of three separate devices designed with a plug-and-play approach: the sensor module, the central module, the control module, and the garden management module.**
+**The system include a set of 4 separate devices designed with a plug-and-play approach: the sensor module, the central module, the control module, and the garden management module.**
 - The sensor module collects environmental data such as temperature, humidity, CO2, TVOC, fire, and smoke.
 
 ![Sensor](https://github.com/MaileThHai/Home-control-and-monitoring-system/blob/main/sensor%20module.png)
