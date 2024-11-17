@@ -10,3 +10,5 @@
 Users can control the on/off functions of connected electrical devices such as lights, fans, pumps, etc., or schedule devices to turn on and off at specific times.
 The data is updated to Google Firebase and stored using Google Sheets.
 Additionally, the system sends alerts through speakers and SMS messages when environmental parameters exceed predefined thresholds or when smoke or fire is detected. Moreover, users can view images captured by a simple integrated camera.
+
+Link for full details: https://drive.google.com/file/d/1KzS3pqtn6JZ0FWfQ_0IYH0cWfo67fT5n/view?usp=sharing
